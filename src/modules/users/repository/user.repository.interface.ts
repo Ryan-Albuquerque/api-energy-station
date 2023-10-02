@@ -1,11 +1,11 @@
 import { CreateOrUpdateUserDto } from "../dtos/create-or-update-user.dto";
-import { User } from "../user.entity";
+import { UserEntity } from "../user.entity";
 
 export abstract class IUserRepository {
-  abstract getByEmail(email: string): Promise<User | null>;
-  abstract create(user: CreateOrUpdateUserDto): Promise<User | null>;
+  abstract getByEmail(email: string): Promise<UserEntity | null>;
+  abstract create(user: CreateOrUpdateUserDto): Promise<UserEntity | null>;
   abstract update(
     id: string,
     user: CreateOrUpdateUserDto
-  ): Promise<User | null>;
+  ): Promise<UserEntity | null>;
 }

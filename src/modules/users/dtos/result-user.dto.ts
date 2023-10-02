@@ -1,5 +1,5 @@
 import { Types } from "mongoose";
-import { User } from "../user.entity";
+import { UserEntity } from "../user.entity";
 
 export class ResultUserDTO {
   public _id: string | Types.ObjectId;
@@ -8,7 +8,7 @@ export class ResultUserDTO {
   public createdAt?: Date | string;
   public updatedAt?: Date | string;
 
-  constructor(user: User) {
+  constructor(user: UserEntity) {
     this._id = user._id;
     this.name = user.name;
     this.email = user.email;
