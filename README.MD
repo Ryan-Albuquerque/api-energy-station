@@ -92,3 +92,4 @@ Caso queira, crie uma conta no mongo atlas : https://account.mongodb.com/account
   - Recursos sem alto acoplamento (Dependendo de abstração e não de concretização)
 - Fiquei em um impasse de onde faria a validação de informações vinda das mutations, e decidi copiar a técnica do NestJs, onde é feito nos [DTOs](https://docs.nestjs.com/techniques/validation) via [ZOD](https://github.com/colinhacks/zod/issues/641)
 - Foi adicionado uma especie de cache utilizando o banco de dados para as informações vindas da API da NASA, onde defini um tempo de 7 dias de expiração.
+- Caso puderem, gostaria de um guia/norte de como trabalhar com data em GraphQL, utilizei essa [doc](https://the-guild.dev/graphql/tools/docs/scalars) como base.
