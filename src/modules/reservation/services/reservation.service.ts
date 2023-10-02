@@ -114,7 +114,7 @@ export class ReservationService implements IReservationService {
         inputStarDate <= ocupedDate.endDate;
 
       if (stationIsReservated) {
-        throw new Error("Staion is busy");
+        throw new Error("Station is busy");
       }
     });
   }
