@@ -10,7 +10,7 @@ Utilizamos a API de exoplanetas da NASA, para conseguir identificar os planetas 
 
 ## Stack utilizada
 
-**Back-end:** Node, Apollo GraphQL Server, Typescript, Zod, MongoDB(Mongoose), Docker e Docker-compose
+**Back-end:** Node, Apollo GraphQL Server, Typescript, Axios, Zod, MongoDB(Mongoose), Docker e Docker-compose
 
 ## Instalação e Inicialização
 
@@ -59,7 +59,7 @@ Caso queira, crie uma conta no mongo atlas : https://account.mongodb.com/account
 ## Requisitos
 
 - [x] Crie um servidor em Node.js usando [Apollo GraphQL Server](https://www.apollographql.com/docs/apollo-server/)
-  - [ ] Crie o schema GraphQL com uma query `suitablePlanets`, que retorna os dados dos planetas com gravidade alta
+  - [x] Crie o schema GraphQL com uma query `suitablePlanets`, que retorna os dados dos planetas com gravidade alta
   - [ ] Crie uma mutation `installStation`, que dado um planeta, instala uma estação de carregamento no planeta(é sugerido criar uma tabela em algum DB que guarde a informação de aonde estão instaladas as estações)
   - [ ] Crie uma query `stations`, que irá listar todas as estações instaladas nos planetas
   - [ ] Crie uma mutation `recharge`, que dado uma estação e um datetime de quanto a recarga irá finalizar, realiza uma recarga, começando a partir do momento em que a mutation foi chamada e finalizando com a datetime passada.
