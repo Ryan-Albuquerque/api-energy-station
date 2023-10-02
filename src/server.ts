@@ -2,6 +2,9 @@ import dotenv from "dotenv";
 dotenv.config();
 
 import { ApolloServer, gql } from "apollo-server";
+import { DatabaseConnect } from "./database/database.mongo";
+
+DatabaseConnect(process.env.DB_URI ?? "");
 
 // Tipos do GraphQL
 const typeDefs = gql`
