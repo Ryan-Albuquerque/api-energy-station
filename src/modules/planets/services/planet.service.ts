@@ -1,4 +1,4 @@
-import { IStationRepository } from "../../stations/repository/station.repository.interface";
+import { IStationService } from "../../stations/services/station.service.interface";
 import { PlanetEntity } from "../entities/planet.entity";
 import { SuitabilityPlanetEntity } from "../entities/suitability-planet.entity";
 import { IExternalPlanetServiceInterface } from "../external/external-planet.service.interface";
@@ -9,7 +9,7 @@ export class PlanetService implements IPlanetService {
   constructor(
     private readonly externalPlanetService: IExternalPlanetServiceInterface,
     private readonly planetRepository: IPlanetRepository,
-    private readonly stationRepository: IStationRepository
+    private readonly stationService: IStationService
   ) {}
   async getPlanets(): Promise<PlanetEntity[] | null> {
     let result = await this.planetRepository.listPlanet();
@@ -36,7 +36,7 @@ export class PlanetService implements IPlanetService {
       }
 
       for (const planet of planetsFetched) {
-        const hasStationInPlanet = await this.stationRepository.getByPlanetName(
+        const hasStationInPlanet = await this.stationService.getByPlanetName(
           planet.name
         );
 

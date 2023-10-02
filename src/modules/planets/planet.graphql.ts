@@ -1,6 +1,6 @@
 import { gql } from "apollo-server";
 
-export const PlanetType = gql`
+export const PlanetGQL = gql`
   type Planet {
     name: String
     mass: Float
