@@ -2,7 +2,7 @@ import { IUserRepository } from "./user.repository.interface";
 import { UserModel } from "../model/user.model";
 import { CreateOrUpdateUserDto } from "../dtos/create-or-update-user.dto";
 import { User } from "../user.entity";
-import { Types } from "mongoose";
+import { ObjectId } from "../../../utils/objectId";
 
 export class UserRepository implements IUserRepository {
   constructor(private readonly userModel: typeof UserModel) {}
@@ -16,7 +16,7 @@ export class UserRepository implements IUserRepository {
   }
 
   async update(id: string, user: CreateOrUpdateUserDto): Promise<User | null> {
-    if (!Types.ObjectId.isValid(id)) {
+    if (!ObjectId.isValid(id)) {
       throw new Error(`id ${id} is invalid`);
     }
 
