@@ -13,7 +13,6 @@ export const RechargeGQL = gql`
     _id: ID
     stationName: String
     userEmail: String
-    inProgress: Boolean
     startDate: Date
     endDate: Date
     totalTime: String
