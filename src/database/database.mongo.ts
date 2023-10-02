@@ -8,10 +8,14 @@ export const DatabaseConnect = (uri: string) => {
         console.log(`[MONGO] Connected in ${info.host}`)
       )
     )
-    .catch((error) => console.error("[MONGO] Not connected", error));
+    .catch((error) => {
+      console.error("[MONGO] Not connected", error);
+      process.exit(1);
+    });
 };
 
 export const DatabaseDisconnect = async () => {
   await mongoose.connection.close();
   console.log("[MONGO] Closed with success");
+  process.exit(1);
 };
