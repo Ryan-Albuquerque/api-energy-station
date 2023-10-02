@@ -1,0 +1,2 @@
+// DI
+export const userModule = () => {};
