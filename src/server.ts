@@ -1,22 +1,26 @@
 import dotenv from "dotenv";
 dotenv.config();
 
-import { ApolloServer, gql } from "apollo-server";
+import { ApolloServer } from "apollo-server";
 import { DatabaseConnect } from "./database/database.mongo";
+
+//GraphTypes
+import { UserGQL } from "./modules/users/user.graphql";
+
+//Resolvers
+import { userModule } from "./modules/users/main";
 
 DatabaseConnect(process.env.DB_URI ?? "");
 
 // Tipos do GraphQL
-const typeDefs = gql`
-  type Query {
-    hello: String
-  }
-`;
-
+const typeDefs = [UserGQL];
 // Resolvers
 const resolvers = {
   Query: {
-    hello: () => "Hello, world!",
+    ...userModule.Query,
+  },
+  Mutation: {
+    ...userModule.Mutation,
   },
 };
 
