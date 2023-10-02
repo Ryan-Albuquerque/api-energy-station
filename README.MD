@@ -46,7 +46,7 @@ Caso queira, crie uma conta no mongo atlas : https://account.mongodb.com/account
   docker-compose --env-file .env up
 ```
 
-**Execute os testes**:
+**Execute os testes**:(Ainda não implementado)
 
 ```bash
   npm run test
