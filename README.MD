@@ -1,4 +1,3 @@
-
 # API ENERGY STATION
 
 Projeto com fim de gerenciar recargas de recursos energéticos para planetas e viajantes intergaláticos.
@@ -9,13 +8,9 @@ Sistema é capaz de gerenciar recarga de recursos energéticos com uma cobertura
 
 Utilizamos a API de exoplanetas da NASA, para conseguir identificar os planetas capazes de receber os postos.
 
-
 ## Stack utilizada
 
-
-**Back-end:** Node, Apollo GraphQL Server, Typescript, MongoDB(Mongoose), Docker e Docker-compose
-
-
+**Back-end:** Node, Apollo GraphQL Server, Typescript, Zod, MongoDB(Mongoose), Docker e Docker-compose
 
 ## Instalação e Inicialização
 
@@ -27,13 +22,12 @@ Utilizamos a API de exoplanetas da NASA, para conseguir identificar os planetas 
 ```
 
 2. **Instale as dependências**:
-    
+
 ```bash
   npm install
 ```
 
 3. **Copie o .env.example e renomeie para .env**
-    
 4. **Adicione os valores das variáveis de ambiente**
 
 Caso queira, crie uma conta no mongo atlas : https://account.mongodb.com/account/login para utilizar o proprio banco de dados na nuvém.
@@ -44,10 +38,10 @@ Caso queira, crie uma conta no mongo atlas : https://account.mongodb.com/account
   npm run start
 ```
 
-
 **Outros recursos**:
 
 **Execute a aplicação no container docker**
+
 ```bash
   docker-compose --env-file .env up
 ```
@@ -61,8 +55,6 @@ Caso queira, crie uma conta no mongo atlas : https://account.mongodb.com/account
 
   npm run test:covarage
 ```
-
-
 
 ## Requisitos
 
@@ -91,10 +83,11 @@ Caso queira, crie uma conta no mongo atlas : https://account.mongodb.com/account
   - A recarga de uma reserva deve ser finalizada ao final do intervalo da reserva.
 - [ ] Crie uma query `stationHistory`, onde será possível visualizar o histórico de recargas de uma estação (mostrar o horário, o tempo de duração da recarga e o usuário que realizou-a)
 
-
 ## Comentários:
+
 - Utilizei uma arquitetura similar a [Monolito modular](https://medium.com/@abel.ncm/arquitetura-monol%C3%ADtica-modular-estrutura%C3%A7%C3%A3o-escal%C3%A1vel-do-projecto-8888ed51f53b).
 - Utilizado recursos do SOLID:
-    - Utilizado para delimitar os módulos e seus sub-recursos.
-    - Criando classes abstratas para manter um contrato, em caso de mudar implementação, os contratos continuariam sendo respeitados.
-    - Recursos sem alto acoplamento (Dependendo de abstração e não de concretização)
+  - Utilizado para delimitar os módulos e seus sub-recursos.
+  - Criando classes abstratas para manter um contrato, em caso de mudar implementação, os contratos continuariam sendo respeitados.
+  - Recursos sem alto acoplamento (Dependendo de abstração e não de concretização)
+- Fiquei em um impasse de onde faria a validação de informações vinda das mutations, e decidi copiar a técnica do NestJs, onde é feito nos [DTOs](https://docs.nestjs.com/techniques/validation) via [ZOD](https://github.com/colinhacks/zod/issues/641)
