@@ -11,11 +11,11 @@ const main = () => {
   const planetService = new PlanetService(
     nasaService,
     planetRepository,
-    stationModule.stationRepository
+    stationModule.stationService
   );
   const { Query } = new PlanetResolver(planetService);
 
-  return { Query };
+  return { Query, planetService };
 };
 
 export const planetModule = main();

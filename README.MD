@@ -60,8 +60,8 @@ Caso queira, crie uma conta no mongo atlas : https://account.mongodb.com/account
 
 - [x] Crie um servidor em Node.js usando [Apollo GraphQL Server](https://www.apollographql.com/docs/apollo-server/)
   - [x] Crie o schema GraphQL com uma query `suitablePlanets`, que retorna os dados dos planetas com gravidade alta
-  - [ ] Crie uma mutation `installStation`, que dado um planeta, instala uma estação de carregamento no planeta(é sugerido criar uma tabela em algum DB que guarde a informação de aonde estão instaladas as estações)
-  - [ ] Crie uma query `stations`, que irá listar todas as estações instaladas nos planetas
+  - [x] Crie uma mutation `installStation`, que dado um planeta, instala uma estação de carregamento no planeta(é sugerido criar uma tabela em algum DB que guarde a informação de aonde estão instaladas as estações)
+  - [x] Crie uma query `stations`, que irá listar todas as estações instaladas nos planetas
   - [ ] Crie uma mutation `recharge`, que dado uma estação e um datetime de quanto a recarga irá finalizar, realiza uma recarga, começando a partir do momento em que a mutation foi chamada e finalizando com a datetime passada.
     - Só é possível realizar uma recarga na estação por vez
     - Essa recarga deve estar atrelado a um usuário - sinta-se livre para implementar da maneira que você desejar.
