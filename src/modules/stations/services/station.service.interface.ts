@@ -9,5 +9,5 @@ export abstract class IStationService {
   ): Promise<StationEntity>;
   abstract getByName(name: string): Promise<StationEntity>;
   abstract list(): Promise<StationEntity[]>;
-  abstract getByPlanetName(name: string): Promise<StationEntity>;
+  abstract getByPlanetName(name: string): Promise<StationEntity | null>;
 }

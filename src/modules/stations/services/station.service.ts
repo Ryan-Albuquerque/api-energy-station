@@ -26,13 +26,7 @@ export class StationService implements IStationService {
   }
 
   async getByPlanetName(name: string) {
-    const station = await this.stationRepository.getByPlanetName(name);
-
-    if (!station) {
-      throw new Error(`Not found station in this planet`);
-    }
-
-    return station;
+    return await this.stationRepository.getByPlanetName(name);
   }
 
   async create(station: CreateOrUpdateStationDTO) {
