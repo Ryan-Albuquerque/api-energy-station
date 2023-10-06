@@ -10,4 +10,5 @@ export abstract class IStationRepository {
   abstract list(): Promise<StationEntity[]>;
   abstract getByName(name: string): Promise<StationEntity | null>;
   abstract getByPlanetName(planetName: string): Promise<StationEntity | null>;
+  abstract syncHasStationPlanetDB(station: StationEntity): Promise<void>;
 }

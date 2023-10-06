@@ -1,7 +1,6 @@
 import { CreateOrUpdateStationDTO } from "../dtos/create-or-update-station.dto";
 import { IStationRepository } from "../repository/station.repository.interface";
 import { IStationService } from "./station.service.interface";
-import { ObjectId } from "../../../utils/objectId";
 
 export class StationService implements IStationService {
   constructor(private readonly stationRepository: IStationRepository) {}
@@ -18,21 +17,36 @@ export class StationService implements IStationService {
     return await this.stationRepository.getByPlanetName(name);
   }
 
+  private async isUniqueStationInPlanet(
+    planet: string,
+    name: string
+  ): Promise<boolean> {
+    const station = await this.getByName(name);
+
+    return station && station?.planetName == planet ? false : true;
+  }
+
   async create(station: CreateOrUpdateStationDTO) {
+    if (
+      !(await this.isUniqueStationInPlanet(station.planetName, station.name))
+    ) {
+      throw new Error(
+        "Should be unique planet - and registered in database - and station name"
+      );
+    }
+
     const newStation = await this.stationRepository.create(station);
 
     if (!newStation) {
       throw new Error("Fail to create Station");
     }
 
+    await this.stationRepository.syncHasStationPlanetDB(newStation);
+
     return newStation;
   }
 
   async update(id: string, station: CreateOrUpdateStationDTO) {
-    if (!ObjectId.isValid(id)) {
-      throw new Error("Invalid Id");
-    }
-
     const updatedStation = await this.stationRepository.update(id, station);
 
     if (!updatedStation) {

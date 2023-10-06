@@ -1,10 +1,24 @@
+import { PlanetModel } from "../../planets/model/planet.model";
 import { CreateOrUpdateStationDTO } from "../dtos/create-or-update-station.dto";
 import { StationModel } from "../model/station.model";
 import { StationEntity } from "../station.entity";
 import { IStationRepository } from "./station.repository.interface";
 
 export class StationRepository implements IStationRepository {
-  constructor(private readonly stationModel: typeof StationModel) {}
+  constructor(
+    private readonly stationModel: typeof StationModel,
+    private readonly planetModel: typeof PlanetModel
+  ) {}
+  async syncHasStationPlanetDB(station: StationEntity): Promise<void> {
+    await this.planetModel.updateOne(
+      {
+        name: station.planetName,
+      },
+      {
+        hasStation: true,
+      }
+    );
+  }
 
   async list(): Promise<StationEntity[]> {
     return await this.stationModel.find();
