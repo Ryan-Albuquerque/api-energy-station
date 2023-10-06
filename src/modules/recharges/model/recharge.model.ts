@@ -17,6 +17,10 @@ const RechargeSchema = new Schema({
     type: Date,
     required: true,
   },
+  totalTime: {
+    type: Number,
+    required: false,
+  },
 });
 
 export const RechargeModel = model("Recharge", RechargeSchema);
