@@ -2,13 +2,13 @@ import { z } from "zod";
 export class CreateRechargeDTO {
   stationName: string;
   userEmail: string;
-  startDate: string | Date;
-  endDate: string | Date;
+  startDate: Date;
+  endDate: Date;
 
   private static schema = z.object({
     stationName: z.string(),
     userEmail: z.string().email(),
-    endDate: z.date().or(z.string()),
+    endDate: z.date(),
   });
 
   constructor(recharge: z.infer<typeof CreateRechargeDTO.schema>) {
