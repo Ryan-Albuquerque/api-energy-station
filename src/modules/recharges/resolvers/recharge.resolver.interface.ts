@@ -10,9 +10,9 @@ export abstract class IRechargeResolver {
   };
   abstract Query: {
     listRecharges: () => Promise<Partial<RechargeEntity>[]>;
-    stationHistory: (
-      _: any,
-      { stationName }: { stationName: string }
-    ) => Promise<Partial<RechargeEntity>[]>;
+    // stationHistory: (
+    //   _: any,
+    //   { stationName }: { stationName: string }
+    // ) => Promise<Partial<RechargeEntity>[]>;
   };
 }

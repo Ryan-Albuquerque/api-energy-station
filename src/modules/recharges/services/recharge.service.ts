@@ -18,37 +18,34 @@ export class RechargeService implements IRechargeService {
     stationName,
     userEmail,
   }: CreateRechargeDTO) {
-    this.isEndDateValid(endDate);
+    await this.ValidateParamsInBusinessRule(
+      userEmail,
+      stationName,
+      startDate,
+      endDate
+    );
 
-    await this.userService.getByEmail(userEmail);
-    await this.stationService.getByName(stationName);
-
-    const recharges = await this.rechargeRepository.list();
-
-    if (
-      await this.isStationInUseOrUserRecharging(
-        recharges,
-        stationName,
-        userEmail
-      )
-    ) {
+    if (await this.isStationInUseOrUserRecharging(stationName, userEmail)) {
       throw new Error("Station in use or user already recharding");
     }
 
-    const reservations =
-      await this.rechargeRepository.listReservationByStationName(stationName);
+    // const reservations =
+    //   await this.rechargeRepository.listReservationByStationName(stationName);
 
-    this.isStationAlreadyReserved(
-      reservations,
-      new Date(startDate),
-      new Date(endDate)
-    );
+    // this.isStationAlreadyReserved(
+    //   reservations,
+    //   new Date(startDate),
+    //   new Date(endDate)
+    // );
+
+    const totalTime = this.calculateTotalMinutes(endDate, startDate);
 
     const created = await this.rechargeRepository.create({
       endDate,
       startDate,
       stationName,
       userEmail,
+      totalTime: Number.parseFloat(totalTime),
     });
 
     if (!created) {
@@ -58,43 +55,23 @@ export class RechargeService implements IRechargeService {
     return created;
   }
 
-  private async isStationInUseOrUserRecharging(
-    recharges: RechargeEntity[] | null,
-    stationName: string,
-    userEmail: string
-  ) {
-    return recharges?.some(
-      (rec) =>
-        new Date(rec.endDate) > new Date() &&
-        new Date() >= new Date(rec.startDate) &&
-        rec.stationName == stationName &&
-        rec.userEmail == userEmail
-    );
-  }
-
   async list() {
-    const recharges = await this.rechargeRepository.list();
-
-    if (!recharges) {
-      throw new Error("No recharges found");
-    }
-
-    return recharges;
+    return await this.rechargeRepository.list();
   }
 
-  async getHistoryFromStation(stationName: string) {
-    const recharges = await this.rechargeRepository.listByStationName(
-      stationName
-    );
+  // async getHistoryFromStation(stationName: string) {
+  //   const recharges = await this.rechargeRepository.listByStationName(
+  //     stationName
+  //   );
 
-    if (!recharges) {
-      throw new Error(`Not found Recharges with station name ${stationName}`);
-    }
+  //   if (!recharges) {
+  //     throw new Error(`Not found Recharges with station name ${stationName}`);
+  //   }
 
-    const rechargesWithTotalHours = this.calcTotalHour(recharges);
+  //   const rechargesWithTotalHours = this.calcTotalHour(recharges);
 
-    return rechargesWithTotalHours;
-  }
+  //   return rechargesWithTotalHours;
+  // }
 
   async getById(id: string) {
     const recharge = await this.rechargeRepository.getById(id);
@@ -106,34 +83,65 @@ export class RechargeService implements IRechargeService {
     return recharge;
   }
 
-  private isEndDateValid(endDate: string | Date) {
-    const isEndDateValid = new Date(endDate) > new Date();
+  private async ValidateParamsInBusinessRule(
+    userEmail: string,
+    stationName: string,
+    startDate: Date,
+    endDate: Date
+  ) {
+    const isEndDateValid = endDate > startDate;
     if (!isEndDateValid) {
       throw new Error(
         "Informed endDate is invalid, should be greater than now"
       );
     }
+
+    await this.userService.getByEmail(userEmail);
+
+    const station = await this.stationService.getByName(stationName);
+    if (!station) {
+      throw new Error(
+        "Invalid Station, try listStation to see available station"
+      );
+    }
   }
 
-  private isStationAlreadyReserved(
-    reservations: ReservationEntity[],
-    startDate: Date,
-    endDate: Date
+  private async isStationInUseOrUserRecharging(
+    stationName: string,
+    userEmail: string
   ) {
-    return reservations.some(
-      (res) => endDate >= res.startDate && startDate <= res.endDate
+    const recharges = await this.rechargeRepository.list(true);
+
+    return recharges?.some(
+      (rec) => rec.userEmail == userEmail && rec.stationName == stationName
     );
   }
 
-  private calcTotalHour(recharges: RechargeEntity[]): RechargeEntity[] {
-    recharges.map((rec) => {
-      const timeInMs =
-        new Date(rec.endDate).getTime() - new Date(rec.startDate).getTime();
+  // private isStationAlreadyReserved(
+  //   reservations: ReservationEntity[],
+  //   startDate: Date,
+  //   endDate: Date
+  // ) {
+  //   return reservations.some(
+  //     (res) => endDate >= res.startDate && startDate <= res.endDate
+  //   );
+  // }
 
-      const timeInHourFormated = (timeInMs / 1000 / 60 / 60).toFixed(3);
-      rec.totalTime = `${timeInHourFormated} hours`;
-    });
+  private calculateTotalMinutes(endDate: Date, startDate: Date) {
+    const timeInMs = endDate.getTime() - startDate.getTime();
 
-    return recharges;
+    return (timeInMs / 1000 / 60).toFixed(2); //to minute
   }
+
+  // private calcTotalHour(recharges: RechargeEntity[]): RechargeEntity[] {
+  //   recharges.map((rec) => {
+  //     const timeInMs =
+  //       new Date(rec.endDate).getTime() - new Date(rec.startDate).getTime();
+
+  //     const timeInHourFormated = (timeInMs / 1000 / 60 / 60).toFixed(3);
+  //     rec.totalTime = `${timeInHourFormated} hours`;
+  //   });
+
+  //   return recharges;
+  // }
 }

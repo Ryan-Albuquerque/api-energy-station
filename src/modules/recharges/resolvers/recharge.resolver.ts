@@ -16,11 +16,11 @@ export class RechargeResolver implements IRechargeResolver {
     listRecharges: async () => {
       return await this.rechargeService.list();
     },
-    stationHistory: async (
-      _: any,
-      { stationName }: { stationName: string }
-    ) => {
-      return await this.rechargeService.getHistoryFromStation(stationName);
-    },
+    // stationHistory: async (
+    //   _: any,
+    //   { stationName }: { stationName: string }
+    // ) => {
+    //   return await this.rechargeService.getHistoryFromStation(stationName);
+    // },
   };
 }
