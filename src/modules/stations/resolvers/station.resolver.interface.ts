@@ -3,7 +3,7 @@ import { StationEntity } from "../station.entity";
 
 export abstract class IStationResolver {
   abstract Query: {
-    stations: () => Promise<Partial<StationEntity>[]>;
+    listStations: () => Promise<Partial<StationEntity>[]>;
   };
 
   abstract Mutation: {

@@ -14,7 +14,7 @@ export const StationGQL = gql`
   }
 
   type Query {
-    stations: [Station]
+    listStations: [Station]
   }
 
   type Mutation {

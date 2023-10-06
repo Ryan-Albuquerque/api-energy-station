@@ -29,7 +29,7 @@ export class StationResolver implements IStationResolver {
   };
 
   Query = {
-    stations: async () => {
+    listStations: async () => {
       return await this.stationService.list();
     },
   };
