@@ -24,6 +24,7 @@ DatabaseConnect(process.env.DB_URI ?? "");
 
 // Tipos do GraphQL
 const typeDefs = [UserGQL, PlanetGQL, StationGQL, RechargeGQL, ReservationGQL];
+
 // Resolvers
 const resolvers = {
   Date: DateScalar,

@@ -7,7 +7,7 @@ export abstract class IStationService {
     id: string,
     data: CreateOrUpdateStationDTO
   ): Promise<StationEntity>;
-  abstract getByName(name: string): Promise<StationEntity>;
+  abstract getByName(name: string): Promise<StationEntity | null>;
   abstract list(): Promise<StationEntity[]>;
   abstract getByPlanetName(name: string): Promise<StationEntity | null>;
 }

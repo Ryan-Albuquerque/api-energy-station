@@ -1,28 +1,17 @@
 import { CreateOrUpdateStationDTO } from "../dtos/create-or-update-station.dto";
 import { IStationRepository } from "../repository/station.repository.interface";
 import { IStationService } from "./station.service.interface";
+import { ObjectId } from "../../../utils/objectId";
 
 export class StationService implements IStationService {
   constructor(private readonly stationRepository: IStationRepository) {}
 
   async list() {
-    const stations = await this.stationRepository.list();
-
-    if (!stations) {
-      throw new Error("Not found any station");
-    }
-
-    return stations;
+    return await this.stationRepository.list();
   }
 
   async getByName(name: string) {
-    const station = await this.stationRepository.getByName(name);
-
-    if (!station) {
-      throw new Error(`Station ${name} not found`);
-    }
-
-    return station;
+    return await this.stationRepository.getByName(name);
   }
 
   async getByPlanetName(name: string) {
@@ -40,6 +29,10 @@ export class StationService implements IStationService {
   }
 
   async update(id: string, station: CreateOrUpdateStationDTO) {
+    if (!ObjectId.isValid(id)) {
+      throw new Error("Invalid Id");
+    }
+
     const updatedStation = await this.stationRepository.update(id, station);
 
     if (!updatedStation) {
