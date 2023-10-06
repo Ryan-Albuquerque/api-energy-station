@@ -24,7 +24,7 @@ export class PlanetService implements IPlanetService {
           el?.updatedAt.getFullYear(),
           el?.updatedAt.getMonth(),
           el?.updatedAt.getDate()
-        ) <= new Date(now.getFullYear(), now.getMonth(), now.getDate() - 1)
+        ) <= new Date(now.getFullYear(), now.getMonth(), now.getDate() - 5)
     );
 
     if (!result || shouldUpdate) {
