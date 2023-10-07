@@ -2,7 +2,7 @@ import jwt from "jsonwebtoken";
 
 export class JwtUtils {
   public static sign(payload: object, isLogin?: boolean) {
-    return jwt.sign(payload, process.env.JWT_SECRET as string, {
+    return jwt.sign({ ...payload }, process.env.JWT_SECRET as string, {
       expiresIn: isLogin ? "1d" : "",
     });
   }
@@ -13,7 +13,7 @@ export class JwtUtils {
         process.env.JWT_SECRET as string
       ) as jwt.JwtPayload;
 
-      const validProps = Object.keys(payload).map((key) => {
+      const validProps = Object.keys(payload).filter((key) => {
         if (returnedProps?.includes(key)) return key;
       });
 

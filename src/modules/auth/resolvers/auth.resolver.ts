@@ -6,7 +6,7 @@ export class AuthResolver implements IAuthResolver {
   constructor(private readonly authService: IAuthService) {}
   Mutation = {
     login: async (_: any, { data }: { data: LoginRequestDTO }) => {
-      return this.authService.login(data);
+      return await this.authService.login(data);
     },
   };
 }
