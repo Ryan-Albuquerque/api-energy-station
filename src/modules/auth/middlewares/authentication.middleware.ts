@@ -8,7 +8,7 @@ export class AuthenticationMiddleware implements IAuthenticationMiddleware {
   auth() {
     return rule()(async (parent, args, context, info) => {
       const authHeader = context.req.headers?.authorization;
-      const token = authHeader.split("Bearer ")[1];
+      const token = authHeader?.split("Bearer ")[1];
 
       if (token) {
         const { id } = JwtUtils.verify(token, ["id"]);

@@ -30,14 +30,20 @@ export class RechargeService implements IRechargeService {
       throw new Error("Station in use or user already recharding");
     }
 
-    // const reservations =
-    //   await this.rechargeRepository.listReservationByStationName(stationName);
+    const reservations = await this.rechargeRepository.listByStationName(
+      stationName
+    );
 
-    // this.isStationAlreadyReserved(
-    //   reservations,
-    //   new Date(startDate),
-    //   new Date(endDate)
-    // );
+    const isStationAlreadyReservedNow = await this.isStationAlreadyReservedNow(
+      reservations,
+      startDate
+    );
+
+    if (!isStationAlreadyReservedNow) {
+      throw new Error(
+        "This is station have a recharge reservation now, try again later"
+      );
+    }
 
     const totalTime = this.calculateTotalMinutes(endDate, startDate);
 
@@ -60,7 +66,7 @@ export class RechargeService implements IRechargeService {
     return await this.rechargeRepository.list();
   }
 
-  async listHistoryFromStation(stationName: string) {
+  async listHistoryFromAStation(stationName: string) {
     const recharges = await this.rechargeRepository.listByStationName(
       stationName
     );
@@ -127,31 +133,16 @@ export class RechargeService implements IRechargeService {
     );
   }
 
-  // private isStationAlreadyReserved(
-  //   reservations: ReservationEntity[],
-  //   startDate: Date,
-  //   endDate: Date
-  // ) {
-  //   return reservations.some(
-  //     (res) => endDate >= res.startDate && startDate <= res.endDate
-  //   );
-  // }
+  private isStationAlreadyReservedNow(
+    reservations: ReservationEntity[],
+    startDate: Date
+  ) {
+    return reservations.some((res) => res.endDate > startDate);
+  }
 
   private calculateTotalMinutes(endDate: Date, startDate: Date) {
     const timeInMs = endDate.getTime() - startDate.getTime();
 
     return (timeInMs / 1000 / 60).toFixed(2); //to minute
   }
-
-  // private calcTotalHour(recharges: RechargeEntity[]): RechargeEntity[] {
-  //   recharges.map((rec) => {
-  //     const timeInMs =
-  //       new Date(rec.endDate).getTime() - new Date(rec.startDate).getTime();
-
-  //     const timeInHourFormated = (timeInMs / 1000 / 60 / 60).toFixed(3);
-  //     rec.totalTime = `${timeInHourFormated} hours`;
-  //   });
-
-  //   return recharges;
-  // }
 }

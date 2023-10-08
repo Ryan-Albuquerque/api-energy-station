@@ -15,24 +15,24 @@ export class ReservationResolver implements IReservationResolver {
 
       return await this.reservationService.createReservation(request);
     },
-    triggerReservation: async (
-      _: any,
-      { id }: { id: string }
-    ): Promise<RechargeEntity> => {
-      return await this.reservationService.createRechargeByReservation(id);
-    },
+    // triggerReservation: async (
+    //   _: any,
+    //   { id }: { id: string }
+    // ): Promise<RechargeEntity> => {
+    //   return await this.reservationService.createRechargeByReservation(id);
+    // },
 
-    updateReservation: async (
-      _: any,
-      {
-        id,
-        reservation,
-      }: { id: string; reservation: CreateOrUpdateReservationDto }
-    ) => {
-      const request = new CreateOrUpdateReservationDto(reservation);
+    // updateReservation: async (
+    //   _: any,
+    //   {
+    //     id,
+    //     reservation,
+    //   }: { id: string; reservation: CreateOrUpdateReservationDto }
+    // ) => {
+    //   const request = new CreateOrUpdateReservationDto(reservation);
 
-      return await this.reservationService.update(id, request);
-    },
+    //   return await this.reservationService.update(id, request);
+    // },
   };
   Query = {
     listReservations: async () => {

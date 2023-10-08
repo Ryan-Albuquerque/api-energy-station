@@ -3,7 +3,7 @@ import { HistoryRechargeInStation } from "../entities/history-recharge-in-statio
 import { RechargeEntity } from "../entities/recharge.entity";
 
 export abstract class IRechargeService {
-  abstract listHistoryFromStation(
+  abstract listHistoryFromAStation(
     stationName: string
   ): Promise<HistoryRechargeInStation>;
   abstract list(): Promise<RechargeEntity[]>;

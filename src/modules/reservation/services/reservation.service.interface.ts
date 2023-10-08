@@ -6,7 +6,7 @@ export abstract class IReservationService {
   abstract createReservation(
     reservation: CreateOrUpdateReservationDto
   ): Promise<ReservationEntity>;
-  abstract createRechargeByReservation(id: string): Promise<RechargeEntity>;
+  // abstract createRechargeByReservation(id: string): Promise<RechargeEntity>;
   abstract list(): Promise<ReservationEntity[]>;
   abstract listByStationName(stationName: string): Promise<ReservationEntity[]>;
   abstract update(

@@ -8,17 +8,17 @@ export abstract class IReservationResolver {
       _: any,
       { reservation }: { reservation: CreateOrUpdateReservationDto }
     ) => Promise<Partial<ReservationEntity>>;
-    triggerReservation: (
-      _: any,
-      { id }: { id: string }
-    ) => Promise<RechargeEntity>;
-    updateReservation: (
-      _: any,
-      {
-        id,
-        reservation,
-      }: { id: string; reservation: CreateOrUpdateReservationDto }
-    ) => Promise<Partial<ReservationEntity>>;
+    // triggerReservation: (
+    //   _: any,
+    //   { id }: { id: string }
+    // ) => Promise<RechargeEntity>;
+    // updateReservation: (
+    //   _: any,
+    //   {
+    //     id,
+    //     reservation,
+    //   }: { id: string; reservation: CreateOrUpdateReservationDto }
+    // ) => Promise<Partial<ReservationEntity>>;
   };
   abstract Query: {
     listReservations: () => Promise<Partial<Partial<ReservationEntity>>[]>;

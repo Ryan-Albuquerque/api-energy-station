@@ -22,7 +22,9 @@ export class ReservationRepository implements IReservationRepository {
     return await this.reservationModel.findById(id);
   }
 
-  async getAllByStationName(stationName: string): Promise<ReservationEntity[]> {
+  async getAllByStationName(
+    stationName: string
+  ): Promise<ReservationEntity[] | null> {
     return await this.reservationModel.find({
       stationName: stationName,
     });

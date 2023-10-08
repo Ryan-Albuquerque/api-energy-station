@@ -3,19 +3,19 @@ import { z } from "zod";
 export class CreateOrUpdateReservationDto {
   stationName: string;
   userEmail: string;
-  startDate: string | Date;
-  endDate: string | Date;
+  startDate: Date;
+  endDate: Date;
 
   private static schema = z.object({
     stationName: z.string(),
     userEmail: z.string().email(),
-    startDate: z.date().or(z.string()),
-    endDate: z.date().or(z.string()),
+    startDate: z.date(),
+    endDate: z.date(),
   });
 
   constructor(recharge: z.infer<typeof CreateOrUpdateReservationDto.schema>) {
-    recharge.endDate = String(recharge.endDate);
-    recharge.startDate = String(recharge.startDate);
+    recharge.endDate = new Date(recharge.endDate);
+    recharge.startDate = new Date(recharge.startDate);
 
     const validatedRecharge =
       CreateOrUpdateReservationDto.schema.safeParse(recharge);

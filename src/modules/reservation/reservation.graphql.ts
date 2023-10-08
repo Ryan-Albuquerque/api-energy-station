@@ -23,7 +23,7 @@ export const ReservationGQL = gql`
   }
 
   type Mutation {
-    reservation(reservation: ReservationInput!): Reservation!
+    reservation(reservation: ReservationInput): Reservation!
     triggerReservation(id: ID!): Recharge!
     updateReservation(id: ID!, reservation: ReservationInput!): Reservation!
   }
