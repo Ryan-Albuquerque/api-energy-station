@@ -1,11 +1,11 @@
-import { CreateRechargeDTO } from "../dtos/create-recharge.dto";
 import { IRechargeRepository } from "../repository/recharge.repository.interface";
 import { IRechargeService } from "./recharge.service.interface";
 import { IUserService } from "../../users/services/user.service.interface";
 import { IStationService } from "../../stations/services/station.service.interface";
-import { RechargeEntity } from "../entities/recharge.entity";
 import { ReservationEntity } from "../../reservation/reservation.entity";
 import { HistoryRechargeInStation } from "../entities/history-recharge-in-station.entity";
+import { CreateRechargeRequestDTO } from "../dtos/create-recharge-request.dto";
+import { CreateRechargeDTO } from "../dtos/create-recharge.dto";
 
 export class RechargeService implements IRechargeService {
   constructor(
@@ -18,7 +18,7 @@ export class RechargeService implements IRechargeService {
     startDate,
     stationName,
     userEmail,
-  }: CreateRechargeDTO) {
+  }: CreateRechargeRequestDTO) {
     await this.ValidateParamsInBusinessRule(
       userEmail,
       stationName,
@@ -47,13 +47,15 @@ export class RechargeService implements IRechargeService {
 
     const totalTime = this.calculateTotalMinutes(endDate, startDate);
 
-    const created = await this.rechargeRepository.create({
+    const rechargeEntity = new CreateRechargeDTO({
       endDate,
       startDate,
       stationName,
       userEmail,
       totalTime: Number.parseFloat(totalTime),
     });
+
+    const created = await this.rechargeRepository.create(rechargeEntity);
 
     if (!created) {
       throw new Error("Fail to create a recharding");

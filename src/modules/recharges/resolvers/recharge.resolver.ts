@@ -1,12 +1,15 @@
-import { CreateRechargeDTO } from "../dtos/create-recharge.dto";
+import { CreateRechargeRequestDTO } from "../dtos/create-recharge-request.dto";
 import { IRechargeService } from "../services/recharge.service.interface";
 import { IRechargeResolver } from "./recharge.resolver.interface";
 
 export class RechargeResolver implements IRechargeResolver {
   constructor(private rechargeService: IRechargeService) {}
   Mutation = {
-    recharge: async (_: any, { recharge }: { recharge: CreateRechargeDTO }) => {
-      const request = new CreateRechargeDTO(recharge);
+    recharge: async (
+      _: any,
+      { recharge }: { recharge: CreateRechargeRequestDTO }
+    ) => {
+      const request = new CreateRechargeRequestDTO(recharge);
 
       return await this.rechargeService.create(request);
     },
