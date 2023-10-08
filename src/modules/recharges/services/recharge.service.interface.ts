@@ -1,5 +1,4 @@
 import { CreateRechargeRequestDTO } from "../dtos/create-recharge-request.dto";
-import { CreateRechargeDTO } from "../dtos/create-recharge.dto";
 import { HistoryRechargeInStation } from "../entities/history-recharge-in-station.entity";
 import { RechargeEntity } from "../entities/recharge.entity";
 

@@ -19,7 +19,7 @@ export class RechargeService implements IRechargeService {
     stationName,
     userEmail,
   }: CreateRechargeRequestDTO) {
-    await this.ValidateParamsInBusinessRule(
+    await this.validateParamsInBusinessRule(
       userEmail,
       stationName,
       startDate,
@@ -101,7 +101,7 @@ export class RechargeService implements IRechargeService {
     return recharge;
   }
 
-  private async ValidateParamsInBusinessRule(
+  private async validateParamsInBusinessRule(
     userEmail: string,
     stationName: string,
     startDate: Date,
