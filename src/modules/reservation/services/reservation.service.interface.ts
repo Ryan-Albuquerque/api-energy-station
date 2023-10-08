@@ -1,4 +1,4 @@
-import { RechargeEntity } from "../../recharges/recharge.entity";
+import { RechargeEntity } from "../../recharges/entities/recharge.entity";
 import { CreateOrUpdateReservationDto } from "../dtos/create-or-update-reservation.dto";
 import { ReservationEntity } from "../reservation.entity";
 

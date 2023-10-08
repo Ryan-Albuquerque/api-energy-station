@@ -1,4 +1,4 @@
-import { RechargeEntity } from "../../recharges/recharge.entity";
+import { RechargeEntity } from "../../recharges/entities/recharge.entity";
 import { IRechargeService } from "../../recharges/services/recharge.service.interface";
 import { ReservationEntity } from "../reservation.entity";
 import { IReservationRepository } from "../repository/reservation.repository.interface";

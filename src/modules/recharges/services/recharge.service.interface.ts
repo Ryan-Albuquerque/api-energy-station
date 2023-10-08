@@ -1,10 +1,11 @@
 import { CreateRechargeDTO } from "../dtos/create-recharge.dto";
-import { RechargeEntity } from "../recharge.entity";
+import { HistoryRechargeInStation } from "../entities/history-recharge-in-station.entity";
+import { RechargeEntity } from "../entities/recharge.entity";
 
 export abstract class IRechargeService {
-  // abstract getHistoryFromStation(
-  //   stationName: string
-  // ): Promise<RechargeEntity[]>;
+  abstract listHistoryFromStation(
+    stationName: string
+  ): Promise<HistoryRechargeInStation>;
   abstract list(): Promise<RechargeEntity[]>;
   abstract create(data: CreateRechargeDTO): Promise<RechargeEntity>;
   // abstract getById(id: string): Promise<RechargeEntity>;

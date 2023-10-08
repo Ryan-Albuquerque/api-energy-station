@@ -3,8 +3,9 @@ import { IRechargeRepository } from "../repository/recharge.repository.interface
 import { IRechargeService } from "./recharge.service.interface";
 import { IUserService } from "../../users/services/user.service.interface";
 import { IStationService } from "../../stations/services/station.service.interface";
-import { RechargeEntity } from "../recharge.entity";
+import { RechargeEntity } from "../entities/recharge.entity";
 import { ReservationEntity } from "../../reservation/reservation.entity";
+import { HistoryRechargeInStation } from "../entities/history-recharge-in-station.entity";
 
 export class RechargeService implements IRechargeService {
   constructor(
@@ -59,19 +60,28 @@ export class RechargeService implements IRechargeService {
     return await this.rechargeRepository.list();
   }
 
-  // async getHistoryFromStation(stationName: string) {
-  //   const recharges = await this.rechargeRepository.listByStationName(
-  //     stationName
-  //   );
+  async listHistoryFromStation(stationName: string) {
+    const recharges = await this.rechargeRepository.listByStationName(
+      stationName
+    );
 
-  //   if (!recharges) {
-  //     throw new Error(`Not found Recharges with station name ${stationName}`);
-  //   }
+    if (!recharges) {
+      throw new Error(`Not found Recharges with station name ${stationName}`);
+    }
 
-  //   const rechargesWithTotalHours = this.calcTotalHour(recharges);
+    const getAllRechargeTimeInStation = recharges.reduce(
+      (prev, curr) => prev + (curr?.totalTime ?? 0),
+      0
+    );
+    const allRechargeTimeInStation = (getAllRechargeTimeInStation / 60).toFixed(
+      3
+    );
 
-  //   return rechargesWithTotalHours;
-  // }
+    return {
+      recharges,
+      totalTime: Number.parseFloat(allRechargeTimeInStation),
+    } as HistoryRechargeInStation;
+  }
 
   async getById(id: string) {
     const recharge = await this.rechargeRepository.getById(id);

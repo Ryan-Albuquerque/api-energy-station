@@ -2,7 +2,7 @@ import { ReservationModel } from "../../reservation/model/reservation.model";
 import { ReservationEntity } from "../../reservation/reservation.entity";
 import { CreateRechargeDTO } from "../dtos/create-recharge.dto";
 import { RechargeModel } from "../model/recharge.model";
-import { RechargeEntity } from "../recharge.entity";
+import { RechargeEntity } from "../entities/recharge.entity";
 import { IRechargeRepository } from "./recharge.repository.interface";
 
 export class RechargeRepository implements IRechargeRepository {
@@ -32,9 +32,7 @@ export class RechargeRepository implements IRechargeRepository {
 
     return await this.rechargeModel.find({ ...options });
   }
-  async listByStationName(
-    stationName: string
-  ): Promise<RechargeEntity[] | null> {
+  async listByStationName(stationName: string): Promise<RechargeEntity[]> {
     return await this.rechargeModel.find({
       stationName: stationName,
     });

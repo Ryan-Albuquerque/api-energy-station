@@ -1,5 +1,6 @@
 import { CreateRechargeDTO } from "../dtos/create-recharge.dto";
-import { RechargeEntity } from "../recharge.entity";
+import { HistoryRechargeInStation } from "../entities/history-recharge-in-station.entity";
+import { RechargeEntity } from "../entities/recharge.entity";
 
 export abstract class IRechargeResolver {
   abstract Mutation: {
@@ -10,9 +11,9 @@ export abstract class IRechargeResolver {
   };
   abstract Query: {
     listRecharges: () => Promise<Partial<RechargeEntity>[]>;
-    // stationHistory: (
-    //   _: any,
-    //   { stationName }: { stationName: string }
-    // ) => Promise<Partial<RechargeEntity>[]>;
+    rechargeStationHistory: (
+      _: any,
+      { stationName }: { stationName: string }
+    ) => Promise<Partial<HistoryRechargeInStation>>;
   };
 }
