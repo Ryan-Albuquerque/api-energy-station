@@ -9,6 +9,6 @@ export abstract class IReservationRepository {
   abstract getById(id: string): Promise<ReservationEntity | null>;
   abstract update(
     id: string,
-    reservation: ReservationEntity
+    reservation: Partial<ReservationEntity>
   ): Promise<ReservationEntity | null>;
 }

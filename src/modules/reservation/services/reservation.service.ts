@@ -3,6 +3,7 @@ import { IRechargeService } from "../../recharges/services/recharge.service.inte
 import { ReservationEntity } from "../reservation.entity";
 import { IReservationRepository } from "../repository/reservation.repository.interface";
 import { IReservationService } from "./reservation.service.interface";
+import { ObjectId } from "../../../utils/objectId";
 
 export class ReservationService implements IReservationService {
   constructor(
@@ -24,7 +25,9 @@ export class ReservationService implements IReservationService {
     }
 
     const isValidReservationRange = await this.isValidReservationRangeByStation(
-      reservation.startDate, reservation.stationName
+      reservation.startDate,
+      reservation.endDate,
+      reservation.stationName
     );
 
     if (!isValidReservationRange) {
@@ -58,6 +61,20 @@ export class ReservationService implements IReservationService {
   //   });
   // }
 
+  async getById(id: string): Promise<ReservationEntity> {
+    if (!ObjectId.isValid(id)) {
+      throw new Error("Is not valid Id");
+    }
+
+    const reservation = await this.reservationRepository.getById(id);
+
+    if (!reservation) {
+      throw new Error("Reservation not found");
+    }
+
+    return reservation;
+  }
+
   async list(): Promise<ReservationEntity[]> {
     const reservations = await this.reservationRepository.list();
 
@@ -82,8 +99,29 @@ export class ReservationService implements IReservationService {
 
   async update(
     id: string,
-    reservation: ReservationEntity
+    reservation: Partial<ReservationEntity>
   ): Promise<ReservationEntity> {
+    if (reservation.endDate && reservation.startDate) {
+      const reservationGot = await this.getById(id);
+
+      const isValidReservationRange =
+        await this.isValidReservationRangeByStation(
+          reservation?.startDate,
+          reservation.endDate,
+          reservationGot.stationName
+        );
+
+      if (!isValidReservationRange) {
+        throw new Error(
+          "This range is not valid for this station: " + reservation.stationName
+        );
+      }
+    } else if (!reservation.endDate && !reservation.startDate) {
+      throw new Error(
+        "You have to update the range not only one date property"
+      );
+    }
+
     const reservationUpdated = await this.reservationRepository.update(
       id,
       reservation
@@ -98,6 +136,7 @@ export class ReservationService implements IReservationService {
 
   private async isValidReservationRangeByStation(
     startDate: Date,
+    endDate: Date,
     stationName: string
   ): Promise<boolean> {
     const savedReservations = await this.listByStationName(stationName);
@@ -105,11 +144,17 @@ export class ReservationService implements IReservationService {
       stationName
     );
     const isValidRangeByReservation = savedReservations.every(
-      (res) => startDate >= res.startDate && startDate >= res.endDate
+      (res) =>
+        startDate >= res.startDate &&
+        startDate >= res.endDate &&
+        endDate > startDate
     );
 
     const isValidRangeByRecharge = savedRecharges?.recharges.every(
-      (res) => startDate >= res.startDate && startDate >= res.endDate
+      (res) =>
+        startDate >= res.startDate &&
+        startDate >= res.endDate &&
+        endDate > startDate
     );
 
     if (!isValidRangeByRecharge || !isValidRangeByReservation) return false;

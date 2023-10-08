@@ -15,10 +15,6 @@ export class ReservationRepository implements IReservationRepository {
   }
 
   async getById(id: string): Promise<ReservationEntity | null> {
-    if (!ObjectId.isValid(id)) {
-      throw new Error("Invalid Id");
-    }
-
     return await this.reservationModel.findById(id);
   }
 
@@ -32,12 +28,8 @@ export class ReservationRepository implements IReservationRepository {
 
   async update(
     id: string,
-    reservation: ReservationEntity
+    reservation: Partial<ReservationEntity>
   ): Promise<ReservationEntity | null> {
-    if (!ObjectId.isValid(id)) {
-      throw new Error("Is not valid Id");
-    }
-
     return await this.reservationModel.findByIdAndUpdate(id, reservation);
   }
 }

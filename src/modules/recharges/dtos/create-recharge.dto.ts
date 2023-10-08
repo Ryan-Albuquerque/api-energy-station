@@ -4,7 +4,6 @@ export class CreateRechargeDTO {
   userEmail: string;
   startDate: Date;
   endDate: Date;
-  totalTime?: number; //in minutes
 
   private static schema = z.object({
     stationName: z.string(),
@@ -13,7 +12,7 @@ export class CreateRechargeDTO {
   });
 
   constructor(recharge: z.infer<typeof CreateRechargeDTO.schema>) {
-    recharge.endDate = new Date(recharge.endDate);
+    recharge.endDate = recharge.endDate;
 
     const validatedRecharge = CreateRechargeDTO.schema.safeParse(recharge);
 
