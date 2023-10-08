@@ -61,16 +61,21 @@ const schemaWithMiddleware = applyMiddleware(
     typeDefs,
     resolvers,
   }),
-  shield({
-    Query: {
-      "*": authModule.authenticationMiddleware.auth(),
+  shield(
+    {
+      Query: {
+        "*": authModule.authenticationMiddleware.auth(),
+      },
+      Mutation: {
+        createUser: allow,
+        login: allow,
+        "*": authModule.authenticationMiddleware.auth(),
+      },
     },
-    Mutation: {
-      createUser: allow,
-      login: allow,
-      "*": authModule.authenticationMiddleware.auth(),
-    },
-  })
+    {
+      debug: true,
+    }
+  )
 );
 
 // Inicializando o Apollo Server
