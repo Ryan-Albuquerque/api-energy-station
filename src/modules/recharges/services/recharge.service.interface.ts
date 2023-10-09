@@ -6,7 +6,7 @@ export abstract class IRechargeService {
   abstract listHistoryFromAStation(
     stationName: string
   ): Promise<HistoryRechargeInStation>;
-  abstract list(): Promise<RechargeEntity[]>;
+  abstract list(fromNow?:boolean): Promise<RechargeEntity[]>;
   abstract create(data: CreateRechargeRequestDTO): Promise<RechargeEntity>;
   // abstract getById(id: string): Promise<RechargeEntity>;
 }

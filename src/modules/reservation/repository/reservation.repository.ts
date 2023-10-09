@@ -1,7 +1,6 @@
 import { ReservationModel } from "../model/reservation.model";
 import { ReservationEntity } from "../reservation.entity";
 import { IReservationRepository } from "./reservation.repository.interface";
-import { ObjectId } from "../../../utils/objectId";
 
 export class ReservationRepository implements IReservationRepository {
   constructor(private readonly reservationModel: typeof ReservationModel) {}
@@ -10,8 +9,18 @@ export class ReservationRepository implements IReservationRepository {
     return await this.reservationModel.create(reservation);
   }
 
-  async list(): Promise<ReservationEntity[]> {
-    return await this.reservationModel.find();
+  async list(fromNow?: boolean): Promise<ReservationEntity[]> {
+    const dateNow = new Date();
+
+    const options = fromNow
+      ? {
+          endDate: {
+            $gte: dateNow,
+          },
+        }
+      : undefined;
+
+    return await this.reservationModel.find({ ...options });
   }
 
   async getById(id: string): Promise<ReservationEntity | null> {

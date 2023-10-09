@@ -1,29 +1,29 @@
 import { ReservationModel } from "../../reservation/model/reservation.model";
-import { ReservationEntity } from "../../reservation/reservation.entity";
 import { CreateRechargeDTO } from "../dtos/create-recharge.dto";
 import { RechargeModel } from "../model/recharge.model";
 import { RechargeEntity } from "../entities/recharge.entity";
 import { IRechargeRepository } from "./recharge.repository.interface";
+import { ReservationEntity } from "../../reservation/reservation.entity";
 
 export class RechargeRepository implements IRechargeRepository {
   constructor(
     private readonly rechargeModel: typeof RechargeModel,
     private readonly reservationModel: typeof ReservationModel
   ) {}
-  async list(active?: boolean): Promise<RechargeEntity[]> {
+  async list(fromNow?: boolean): Promise<RechargeEntity[]> {
     const dateNow = new Date();
 
-    const options = active
+    const options = fromNow
       ? {
           $and: [
             {
               endDate: {
-                $gte: dateNow,
+                $gt: dateNow,
               },
             },
             {
               startDate: {
-                $lt: dateNow,
+                $lte: dateNow,
               },
             },
           ],
@@ -51,11 +51,11 @@ export class RechargeRepository implements IRechargeRepository {
       new: true,
     });
   }
-  // async listReservationByStationName(
-  //   stationName: string
-  // ): Promise<ReservationEntity[]> {
-  //   return await this.reservationModel.find({
-  //     stationName: stationName,
-  //   });
-  // }
+  async listReservationByStationName(
+    stationName: string
+  ): Promise<ReservationEntity[]> {
+    return await this.reservationModel.find({
+      stationName: stationName,
+    });
+  }
 }

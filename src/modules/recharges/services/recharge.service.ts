@@ -30,16 +30,15 @@ export class RechargeService implements IRechargeService {
       throw new Error("Station in use or user already recharding");
     }
 
-    const reservations = await this.rechargeRepository.listByStationName(
-      stationName
-    );
+    const reservations =
+      await this.rechargeRepository.listReservationByStationName(stationName);
 
-    const isStationAlreadyReservedNow = await this.isStationAlreadyReservedNow(
+    const isStationAlreadyReservedNow = this.isStationAlreadyReservedNow(
       reservations,
       startDate
     );
 
-    if (!isStationAlreadyReservedNow) {
+    if (isStationAlreadyReservedNow) {
       throw new Error(
         "This is station have a recharge reservation now, try again later"
       );
@@ -64,8 +63,8 @@ export class RechargeService implements IRechargeService {
     return created;
   }
 
-  async list() {
-    return await this.rechargeRepository.list();
+  async list(fromNow?: boolean) {
+    return await this.rechargeRepository.list(fromNow);
   }
 
   async listHistoryFromAStation(stationName: string) {
@@ -139,7 +138,7 @@ export class RechargeService implements IRechargeService {
     reservations: ReservationEntity[],
     startDate: Date
   ) {
-    return reservations.some((res) => res.endDate > startDate);
+    return reservations.some((res) => res.endDate >= startDate);
   }
 
   private calculateTotalMinutes(endDate: Date, startDate: Date) {

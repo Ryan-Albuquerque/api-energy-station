@@ -29,6 +29,7 @@ export const RechargeGQL = gql`
 
   type Query {
     listRecharges: [Recharge]
+    listActiveRecharges: [Recharge]
     rechargeStationHistory(stationName: String): HistoryRecharge
   }
 `;

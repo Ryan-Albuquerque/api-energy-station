@@ -19,6 +19,9 @@ export class RechargeResolver implements IRechargeResolver {
     listRecharges: async () => {
       return await this.rechargeService.list();
     },
+    listActiveRecharges: async () => {
+      return await this.rechargeService.list(true);
+    },
     rechargeStationHistory: async (
       _: any,
       { stationName }: { stationName: string }
