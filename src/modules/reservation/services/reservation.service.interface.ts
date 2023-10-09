@@ -6,11 +6,11 @@ export abstract class IReservationService {
   abstract createReservation(
     reservation: CreateOrUpdateReservationDto
   ): Promise<ReservationEntity>;
-  // abstract createRechargeByReservation(id: string): Promise<RechargeEntity>;
+  abstract triggerReservation(id: string): Promise<RechargeEntity>;
   abstract list(fromNow?: boolean): Promise<ReservationEntity[]>;
   abstract listByStationName(stationName: string): Promise<ReservationEntity[]>;
   abstract update(
     id: string,
-    reservation: CreateOrUpdateReservationDto
+    reservation: Partial<CreateOrUpdateReservationDto>
   ): Promise<ReservationEntity>;
 }

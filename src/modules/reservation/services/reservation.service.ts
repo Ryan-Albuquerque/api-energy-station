@@ -4,6 +4,7 @@ import { ReservationEntity } from "../reservation.entity";
 import { IReservationRepository } from "../repository/reservation.repository.interface";
 import { IReservationService } from "./reservation.service.interface";
 import { ObjectId } from "../../../utils/objectId";
+import { CreateOrUpdateReservationDto } from "../dtos/create-or-update-reservation.dto";
 
 export class ReservationService implements IReservationService {
   constructor(
@@ -46,20 +47,20 @@ export class ReservationService implements IReservationService {
     return reservationCreated;
   }
 
-  // async createRechargeByReservation(id: string): Promise<RechargeEntity> {
-  //   const reservation = await this.reservationRepository.getById(id);
+  async triggerReservation(id: string): Promise<RechargeEntity> {
+    const reservation = await this.reservationRepository.getById(id);
 
-  //   if (!reservation) {
-  //     throw new Error("Reservation not found");
-  //   }
+    if (!reservation) {
+      throw new Error("Reservation not found");
+    }
 
-  //   return await this.rechargeService.create({
-  //     stationName: reservation.stationName,
-  //     userEmail: reservation.userEmail,
-  //     startDate: new Date(),
-  //     endDate: reservation.endDate,
-  //   });
-  // }
+    return await this.rechargeService.create({
+      stationName: reservation.stationName,
+      userEmail: reservation.userEmail,
+      startDate: new Date(),
+      endDate: reservation.endDate,
+    });
+  }
 
   async getById(id: string): Promise<ReservationEntity> {
     if (!ObjectId.isValid(id)) {
@@ -99,27 +100,12 @@ export class ReservationService implements IReservationService {
 
   async update(
     id: string,
-    reservation: Partial<ReservationEntity>
+    reservation: Partial<CreateOrUpdateReservationDto>
   ): Promise<ReservationEntity> {
-    if (reservation.endDate && reservation.startDate) {
-      const reservationGot = await this.getById(id);
+    const reservationGot = await this.getById(id);
 
-      const isValidReservationRange =
-        await this.isValidReservationRangeByStation(
-          reservation?.startDate,
-          reservation.endDate,
-          reservationGot.stationName
-        );
-
-      if (!isValidReservationRange) {
-        throw new Error(
-          "This range is not valid for this station: " + reservation.stationName
-        );
-      }
-    } else if (!reservation.endDate && !reservation.startDate) {
-      throw new Error(
-        "You have to update the range not only one date property"
-      );
+    if (!reservationGot) {
+      throw new Error("Invalid reservation id");
     }
 
     const reservationUpdated = await this.reservationRepository.update(
@@ -145,16 +131,12 @@ export class ReservationService implements IReservationService {
     );
     const isValidRangeByReservation = savedReservations.every(
       (res) =>
-        startDate >= res.startDate &&
-        startDate >= res.endDate &&
+        (startDate >= res.endDate || endDate <= res.startDate) &&
         endDate > startDate
     );
 
     const isValidRangeByRecharge = savedRecharges?.recharges.every(
-      (res) =>
-        startDate >= res.startDate &&
-        startDate >= res.endDate &&
-        endDate > startDate
+      (res) => res.endDate < startDate && endDate > startDate
     );
 
     if (!isValidRangeByRecharge || !isValidRangeByReservation) return false;

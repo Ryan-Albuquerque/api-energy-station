@@ -5,12 +5,14 @@ export class CreateOrUpdateReservationDto {
   userEmail: string;
   startDate: Date;
   endDate: Date;
+  inProgress?: boolean;
 
   private static schema = z.object({
     stationName: z.string(),
     userEmail: z.string().email(),
     startDate: z.date(),
     endDate: z.date(),
+    inProgress: z.boolean().optional(),
   });
 
   constructor(recharge: z.infer<typeof CreateOrUpdateReservationDto.schema>) {
@@ -28,5 +30,6 @@ export class CreateOrUpdateReservationDto {
     this.userEmail = validatedRecharge.data.userEmail;
     this.startDate = validatedRecharge.data.startDate;
     this.endDate = validatedRecharge.data.endDate;
+    this.inProgress = validatedRecharge.data.inProgress;
   }
 }

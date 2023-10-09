@@ -17,6 +17,10 @@ const ReservationSchema = new Schema({
     type: Date,
     required: true,
   },
+  inProgress: {
+    type: Boolean,
+    default: false,
+  },
 });
 
 export const ReservationModel = model("Reservation", ReservationSchema);

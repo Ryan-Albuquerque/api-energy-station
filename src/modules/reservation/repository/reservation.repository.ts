@@ -14,9 +14,18 @@ export class ReservationRepository implements IReservationRepository {
 
     const options = fromNow
       ? {
-          endDate: {
-            $gte: dateNow,
-          },
+          $and: [
+            {
+              endDate: {
+                $gt: dateNow,
+              },
+            },
+            {
+              startDate: {
+                $lte: dateNow,
+              },
+            },
+          ],
         }
       : undefined;
 

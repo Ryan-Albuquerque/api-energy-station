@@ -24,8 +24,6 @@ import { stationModule } from "./modules/stations/main";
 import { rechargeModule } from "./modules/recharges/main";
 import { reservationModule } from "./modules/reservation/main";
 
-DatabaseConnect(process.env.DB_URI ?? "");
-
 // Tipos do GraphQL
 const typeDefs = [
   UserGQL,
@@ -85,6 +83,10 @@ const server = new ApolloServer({
 });
 
 // Iniciar o servidor
-server.listen().then(({ url }) => {
-  console.log(`🚀 Server ready at ${url}`);
-});
+(async () => {
+  await DatabaseConnect(process.env.DB_URI ?? "");
+  server.listen().then(({ url }) => {
+    console.log(`🚀 Server ready at ${url}`);
+  });
+  require("./handleCrons");
+})();

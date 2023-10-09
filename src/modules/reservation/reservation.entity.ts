@@ -6,4 +6,5 @@ export type ReservationEntity = {
   userEmail: string;
   startDate: Date;
   endDate: Date;
+  inProgress?: boolean;
 };
