@@ -27,7 +27,7 @@ export class PlanetService implements IPlanetService {
         ) <= new Date(now.getFullYear(), now.getMonth(), now.getDate() - 5)
     );
 
-    if (!result || shouldUpdate) {
+    if (!result.length || shouldUpdate) {
       const planetsFetched = await this.externalPlanetService.fetchPlanet();
       if (!planetsFetched) {
         return [];
