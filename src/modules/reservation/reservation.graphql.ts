@@ -16,10 +16,12 @@ export const ReservationGQL = gql`
     userEmail: String
     startDate: Date
     endDate: Date
+    isTrigged: Boolean
   }
 
   type Query {
     listReservations: [Reservation]!
+    listActiveReservations: [Reservation]!
   }
 
   type Mutation {

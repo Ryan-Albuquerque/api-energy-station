@@ -26,17 +26,9 @@ export class RechargeCron implements IRechargeCron {
 
       reservationToTrigger.forEach(async (res) => {
         try {
-          const updateReservation: CreateOrUpdateReservationDto = {
-            endDate: res.endDate,
-            startDate: res.startDate,
-            stationName: res.stationName,
-            userEmail: res.userEmail,
-            isTrigged: true,
-          };
-
           const updateInProgress = await this.reservationService.update(
             res._id.toString(),
-            updateReservation
+            { isTrigged: true }
           );
 
           updateInProgress &&
@@ -44,12 +36,15 @@ export class RechargeCron implements IRechargeCron {
               `Starting recharge reservation(${res._id}) from ${res.stationName}`
             );
 
-          (await this.reservationService.triggerReservation(
+          const { _id } = await this.reservationService.triggerReservation(
             res._id.toString()
-          )) &&
+          );
+
+          if (_id) {
             console.log(
-              `Recharge reservation(${res._id}) from ${res.stationName} started`
+              `Recharge(${_id}) reservation(${res._id}) from ${res.stationName} started`
             );
+          }
         } catch (error) {
           throw error;
         }

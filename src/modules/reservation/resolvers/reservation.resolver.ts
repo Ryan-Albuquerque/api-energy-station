@@ -15,12 +15,12 @@ export class ReservationResolver implements IReservationResolver {
 
       return await this.reservationService.createReservation(request);
     },
-    // triggerReservation: async (
-    //   _: any,
-    //   { id }: { id: string }
-    // ): Promise<RechargeEntity> => {
-    //   return await this.reservationService.createRechargeByReservation(id);
-    // },
+    triggerReservation: async (
+      _: any,
+      { id }: { id: string }
+    ): Promise<RechargeEntity> => {
+      return await this.reservationService.triggerReservation(id);
+    },
 
     updateReservation: async (
       _: any,
