@@ -2,6 +2,7 @@ import { IUserService } from "./user.service.interface";
 import { IUserRepository } from "../repository/user.repository.interface";
 import { CreateOrUpdateUserDto } from "../dtos/create-or-update-user.dto";
 import { BcryptUtils } from "../../../utils/bcrypt";
+import { ObjectId } from "../../../utils/objectId";
 
 export class UserService implements IUserService {
   constructor(private readonly userRepository: IUserRepository) {}
@@ -19,6 +20,10 @@ export class UserService implements IUserService {
   }
 
   async update(id: string, user: CreateOrUpdateUserDto) {
+    if (!ObjectId.isValid(id)) {
+      throw new Error(`id ${id} is invalid`);
+    }
+
     const updatedUser = await this.userRepository.update(id, user);
 
     if (!updatedUser) {

@@ -26,7 +26,10 @@ export class RechargeService implements IRechargeService {
       endDate
     );
 
-    if (await this.isStationInUseOrUserRecharging(stationName, userEmail)) {
+    const isStationInUseOrUserRecharging =
+      await this.isStationInUseOrUserRecharging(stationName, userEmail);
+
+    if (isStationInUseOrUserRecharging) {
       throw new Error("Station in use or user already recharding");
     }
 

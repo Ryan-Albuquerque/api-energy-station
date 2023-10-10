@@ -38,5 +38,8 @@ export class ReservationResolver implements IReservationResolver {
     listReservations: async () => {
       return await this.reservationService.list();
     },
+    listActiveReservations: async () => {
+      return await this.reservationService.list(true);
+    },
   };
 }

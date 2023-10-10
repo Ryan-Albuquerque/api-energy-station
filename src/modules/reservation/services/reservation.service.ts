@@ -54,12 +54,14 @@ export class ReservationService implements IReservationService {
       throw new Error("Reservation not found");
     }
 
-    return await this.rechargeService.create({
+    const createRecharge = await this.rechargeService.create({
       stationName: reservation.stationName,
       userEmail: reservation.userEmail,
       startDate: new Date(),
       endDate: reservation.endDate,
     });
+
+    return createRecharge;
   }
 
   async getById(id: string): Promise<ReservationEntity> {

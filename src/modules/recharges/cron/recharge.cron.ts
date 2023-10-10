@@ -24,7 +24,7 @@ export class RechargeCron implements IRechargeCron {
         }
       });
 
-      reservationToTrigger.forEach(async (res) => {
+      for (const res of reservationToTrigger) {
         try {
           const updateInProgress = await this.reservationService.update(
             res._id.toString(),
@@ -48,7 +48,7 @@ export class RechargeCron implements IRechargeCron {
         } catch (error) {
           throw error;
         }
-      });
+      }
     } catch (error) {
       console.error("Trigger recharge error: " + JSON.stringify(error));
     }

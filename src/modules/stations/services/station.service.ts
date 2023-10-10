@@ -1,3 +1,4 @@
+import { ObjectId } from "../../../utils/objectId";
 import { CreateOrUpdateStationDTO } from "../dtos/create-or-update-station.dto";
 import { IStationRepository } from "../repository/station.repository.interface";
 import { IStationService } from "./station.service.interface";
@@ -47,6 +48,9 @@ export class StationService implements IStationService {
   }
 
   async update(id: string, station: CreateOrUpdateStationDTO) {
+    if (!ObjectId.isValid(id)) {
+      throw new Error("Invalid Id");
+    }
     const updatedStation = await this.stationRepository.update(id, station);
 
     if (!updatedStation) {
