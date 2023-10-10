@@ -50,18 +50,40 @@ export class ReservationService implements IReservationService {
   async triggerReservation(id: string): Promise<RechargeEntity> {
     const reservation = await this.reservationRepository.getById(id);
 
-    if (!reservation) {
-      throw new Error("Reservation not found");
+    if (!reservation || reservation.isTrigged) {
+      throw new Error("Reservation not found or already trigged");
     }
 
-    const createRecharge = await this.rechargeService.create({
-      stationName: reservation.stationName,
-      userEmail: reservation.userEmail,
-      startDate: new Date(),
-      endDate: reservation.endDate,
+    const activeRecharges = await this.rechargeService.list(true);
+
+    const isValidToStartRecharge = activeRecharges.every(
+      (rec) =>
+        rec.stationName !== reservation.stationName ||
+        rec.userEmail !== reservation.userEmail
+    );
+
+    if (!isValidToStartRecharge) {
+      throw new Error("User is recharging or Station is in us");
+    }
+
+    const updateInProgress = await this.update(reservation._id.toString(), {
+      isTrigged: true,
     });
 
-    return createRecharge;
+    updateInProgress &&
+      console.log(
+        `Starting recharge reservation(${reservation._id}) from ${reservation.stationName}`
+      );
+
+    const recharge = await this.triggerReservation(reservation._id.toString());
+
+    if (recharge._id) {
+      console.log(
+        `Recharge(${recharge._id}) reservation(${reservation._id}) from ${reservation.stationName} started`
+      );
+    }
+
+    return recharge;
   }
 
   async getById(id: string): Promise<ReservationEntity> {

@@ -18,7 +18,7 @@ export class RechargeCron implements IRechargeCron {
         if (res.isTrigged == false && now >= res.startDate) {
           return recharge.every(
             (rec) =>
-              res.stationName !== rec.stationName &&
+              rec.stationName !== res.stationName ||
               rec.userEmail !== res.userEmail
           );
         }
