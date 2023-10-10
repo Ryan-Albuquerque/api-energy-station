@@ -9,7 +9,7 @@ const main = () => {
     rechargeModule.rechargeService
   );
 
-  const job = new CronJob("* * * * * *", function () {
+  const job = new CronJob("*/2 * * * * *", function () {
     handleTriggerRecharge.watchReservationAndTriggerRecharge();
   });
   if (!job.running) {

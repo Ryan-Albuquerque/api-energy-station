@@ -17,7 +17,7 @@ const ReservationSchema = new Schema({
     type: Date,
     required: true,
   },
-  inProgress: {
+  isTrigged: {
     type: Boolean,
     default: false,
   },

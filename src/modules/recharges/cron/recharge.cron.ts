@@ -10,31 +10,28 @@ export class RechargeCron implements IRechargeCron {
   ) {}
   async watchReservationAndTriggerRecharge() {
     try {
+      const now = new Date();
       const reservation = await this.reservationService.list(true);
       const recharge = await this.rechargeService.list(true);
 
       const reservationToTrigger = reservation.filter((res) => {
-        return recharge.every(
-          (rec) =>
-            rec.stationName !== res.stationName && //means this station is not in use
-            rec.userEmail !== res.userEmail //means this user is not recharging
-        );
+        if (res.isTrigged == false && now >= res.startDate) {
+          return recharge.every(
+            (rec) =>
+              res.stationName !== rec.stationName &&
+              rec.userEmail !== res.userEmail
+          );
+        }
       });
 
       reservationToTrigger.forEach(async (res) => {
         try {
-          await this.reservationService.triggerReservation(res._id.toString());
-
-          console.log(
-            `Starting recharge reservation(${res._id}) from ${res.stationName}`
-          );
-
           const updateReservation: CreateOrUpdateReservationDto = {
             endDate: res.endDate,
             startDate: res.startDate,
             stationName: res.stationName,
             userEmail: res.userEmail,
-            inProgress: true,
+            isTrigged: true,
           };
 
           const updateInProgress = await this.reservationService.update(
@@ -42,11 +39,17 @@ export class RechargeCron implements IRechargeCron {
             updateReservation
           );
 
-          if (updateInProgress) {
+          updateInProgress &&
+            console.log(
+              `Starting recharge reservation(${res._id}) from ${res.stationName}`
+            );
+
+          (await this.reservationService.triggerReservation(
+            res._id.toString()
+          )) &&
             console.log(
               `Recharge reservation(${res._id}) from ${res.stationName} started`
             );
-          }
         } catch (error) {
           throw error;
         }

@@ -41,11 +41,11 @@ export class RechargeService implements IRechargeService {
 
     if (isStationAlreadyReservedNow) {
       throw new Error(
-        "This is station have a recharge reservation for this range, try again later"
+        "This is station have a non-trigged recharge reservation for this range, try again later"
       );
     }
 
-    const totalTime = this.calculateTotalMinutes(endDate, startDate);
+    const totalTime = this.calculateTotalHour(endDate, startDate);
 
     const rechargeEntity = new CreateRechargeDTO({
       endDate,
@@ -81,9 +81,7 @@ export class RechargeService implements IRechargeService {
       (prev, curr) => prev + (curr?.totalTime ?? 0),
       0
     );
-    const allRechargeTimeInStation = (getAllRechargeTimeInStation / 60).toFixed(
-      3
-    );
+    const allRechargeTimeInStation = getAllRechargeTimeInStation.toFixed(3);
 
     return {
       recharges,
@@ -141,13 +139,14 @@ export class RechargeService implements IRechargeService {
     endDate: Date
   ) {
     return reservations.some(
-      (res) => res.startDate > startDate && res.startDate < endDate
+      (res) =>
+        res.startDate >= startDate && res.startDate < endDate && !res.isTrigged
     );
   }
 
-  private calculateTotalMinutes(endDate: Date, startDate: Date) {
+  private calculateTotalHour(endDate: Date, startDate: Date) {
     const timeInMs = endDate.getTime() - startDate.getTime();
 
-    return (timeInMs / 1000 / 60).toFixed(2); //to minute
+    return (timeInMs / 1000 / 60 / 60).toFixed(3); //to Hour
   }
 }

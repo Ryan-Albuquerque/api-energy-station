@@ -26,14 +26,14 @@ export class ReservationService implements IReservationService {
     }
 
     const isValidReservationRange = await this.isValidReservationRangeByStation(
-      reservation.startDate,
-      reservation.endDate,
-      reservation.stationName
+      reservation
     );
 
     if (!isValidReservationRange) {
       throw new Error(
-        "This range is not valid for this station: " + reservation.stationName
+        "This range is not valid for this station: " +
+          reservation.stationName +
+          "\n or user already have reservation for this time"
       );
     }
 
@@ -120,23 +120,29 @@ export class ReservationService implements IReservationService {
     return reservationUpdated;
   }
 
-  private async isValidReservationRangeByStation(
-    startDate: Date,
-    endDate: Date,
-    stationName: string
-  ): Promise<boolean> {
+  private async isValidReservationRangeByStation({
+    startDate,
+    endDate,
+    stationName,
+    userEmail,
+  }: ReservationEntity): Promise<boolean> {
     const savedReservations = await this.listByStationName(stationName);
-    const savedRecharges = await this.rechargeService.listHistoryFromAStation(
-      stationName
-    );
+    const savedRecharges = await this.rechargeService.list(true);
+
     const isValidRangeByReservation = savedReservations.every(
       (res) =>
         (startDate >= res.endDate || endDate <= res.startDate) &&
         endDate > startDate
     );
 
-    const isValidRangeByRecharge = savedRecharges?.recharges.every(
-      (res) => res.endDate < startDate && endDate > startDate
+    const isValidRangeByRecharge = savedRecharges.every(
+      (res) =>
+        endDate > startDate &&
+        !(
+          res.endDate > startDate &&
+          res.stationName == stationName &&
+          res.userEmail == userEmail
+        )
     );
 
     if (!isValidRangeByRecharge || !isValidRangeByReservation) return false;

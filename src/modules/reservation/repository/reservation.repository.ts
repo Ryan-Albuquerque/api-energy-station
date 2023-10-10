@@ -14,18 +14,9 @@ export class ReservationRepository implements IReservationRepository {
 
     const options = fromNow
       ? {
-          $and: [
-            {
-              endDate: {
-                $gt: dateNow,
-              },
-            },
-            {
-              startDate: {
-                $lte: dateNow,
-              },
-            },
-          ],
+          endDate: {
+            $gt: dateNow,
+          },
         }
       : undefined;
 
@@ -48,6 +39,8 @@ export class ReservationRepository implements IReservationRepository {
     id: string,
     reservation: Partial<ReservationEntity>
   ): Promise<ReservationEntity | null> {
-    return await this.reservationModel.findByIdAndUpdate(id, reservation);
+    return await this.reservationModel.findByIdAndUpdate(id, reservation, {
+      new: true,
+    });
   }
 }
