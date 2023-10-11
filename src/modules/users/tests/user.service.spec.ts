@@ -1,9 +1,7 @@
-import { BcryptUtils } from "../../../utils/bcrypt";
 import { UserService } from "../services/user.service";
 import { mockUserRepository } from "./mocks/mock-user.repository";
 import { FixtureUserEntity } from "./mocks/data/fixture-user-entity";
 import { CreateOrUpdateUserDto } from "../dtos/create-or-update-user.dto";
-import { UserRepository } from "../../../../tests/mocks/users/user.repository";
 
 const userService = new UserService(mockUserRepository);
 
@@ -83,6 +81,32 @@ describe("UserService", () => {
       ).rejects.toThrow(
         `Fail to update User with id: ${FixtureUserEntity._id}`
       );
+    });
+  });
+
+  describe("GetByEmail", () => {
+    it("should get user by email with successful", async () => {
+      // Arrange
+
+      //Act
+      const response = await userService.getByEmail(FixtureUserEntity.email);
+
+      //Assert
+      expect(response).toEqual(FixtureUserEntity);
+    });
+
+    it("should throw `user not found` exception when email not match", async () => {
+      // Arrange
+      jest
+        .spyOn(mockUserRepository, "getByEmail")
+        .mockImplementationOnce(() => Promise.resolve(null));
+
+      //Act
+
+      //Assert
+      await expect(
+        userService.getByEmail(FixtureUserEntity.email)
+      ).rejects.toThrow(`User with email ${FixtureUserEntity.email} not found`);
     });
   });
 });
