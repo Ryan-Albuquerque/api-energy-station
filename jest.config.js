@@ -11,7 +11,7 @@ module.exports = {
     preset: 'ts-jest',
 
     collectCoverage: true,
-    collectCoverageFrom: ['src/**/*.{ts,tsx}', "!**/tests/**",],
+    collectCoverageFrom: ['src/**/*.{ts,tsx}', "!**/tests/**", "!**/*.interface.*"],
     coverageThreshold: {
       global: {
         lines: 80

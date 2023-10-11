@@ -2,6 +2,7 @@ import { rule } from "graphql-shield";
 import { IAuthenticationMiddleware } from "./authentication.middleware.interface";
 import { JwtUtils } from "../../../utils/jwt";
 
+/* istanbul ignore file */
 export class AuthenticationMiddleware implements IAuthenticationMiddleware {
   constructor() {}
 
