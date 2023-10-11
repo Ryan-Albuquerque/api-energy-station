@@ -28,7 +28,7 @@ describe("AuthService", () => {
       expect(response).toEqual(FixtureLoginResponse);
     });
 
-    it("should thow an `Invalid Credentials` exception", async () => {
+    it("should throw `Invalid Credentials` exception when password is not valid", async () => {
       // Arrange
       jest
         .spyOn(BcryptUtils, "comparePassword")
