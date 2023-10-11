@@ -1,6 +1,6 @@
 import { z } from "zod";
 
-export class CreateOrUpdateUserDto {
+export class CreateUserDto {
   name: string;
   email: string;
   password: string;
@@ -11,8 +11,8 @@ export class CreateOrUpdateUserDto {
     password: z.string().min(6),
   });
 
-  constructor(user: z.infer<typeof CreateOrUpdateUserDto.schema>) {
-    const validate = CreateOrUpdateUserDto.schema.safeParse(user);
+  constructor(user: z.infer<typeof CreateUserDto.schema>) {
+    const validate = CreateUserDto.schema.safeParse(user);
 
     if (!validate.success) {
       throw new Error(`Validation Error: ${validate.error}`);

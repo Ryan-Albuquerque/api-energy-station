@@ -1,13 +1,14 @@
 import { IUserService } from "./user.service.interface";
 import { IUserRepository } from "../repository/user.repository.interface";
-import { CreateOrUpdateUserDto } from "../dtos/create-or-update-user.dto";
+import { CreateUserDto } from "../dtos/create-user.dto";
 import { BcryptUtils } from "../../../utils/bcrypt";
 import { ObjectId } from "../../../utils/objectId";
+import { UpdateUserDto } from "../dtos/update-user.dto";
 
 export class UserService implements IUserService {
   constructor(private readonly userRepository: IUserRepository) {}
 
-  async create(user: CreateOrUpdateUserDto) {
+  async create(user: CreateUserDto) {
     user.password = await BcryptUtils.hashPassword(user.password);
 
     const createdUser = await this.userRepository.create(user);
@@ -19,7 +20,7 @@ export class UserService implements IUserService {
     return createdUser;
   }
 
-  async update(id: string, user: CreateOrUpdateUserDto) {
+  async update(id: string, user: UpdateUserDto) {
     if (!ObjectId.isValid(id)) {
       throw new Error(`id ${id} is invalid`);
     }

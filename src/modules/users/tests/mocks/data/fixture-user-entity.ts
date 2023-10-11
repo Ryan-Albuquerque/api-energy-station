@@ -1,6 +1,6 @@
 import { faker } from "@faker-js/faker";
 import { UserEntity } from "../../../user.entity";
-import { ValidObjectId } from "../../../../../../tests/utils/valid-resources.test";
+import { ValidObjectId } from "../../../../../tests/utils/valid-resources";
 
 export const FixtureUserEntity: UserEntity = {
   email: faker.internet.email(),

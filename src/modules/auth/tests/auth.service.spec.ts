@@ -2,8 +2,10 @@ import { BcryptUtils } from "../../../utils/bcrypt";
 import { JwtUtils } from "../../../utils/jwt";
 import { mockUserService } from "../../users/tests/mocks/mock-user.service";
 import { AuthService } from "../services/auth.service";
-import { FixtureLoginResponse } from "./mocks/data/fixture-login-reponse";
-import { FixtureLoginRequest } from "./mocks/data/fixture-login-request";
+import {
+  FixtureLoginRequest,
+  FixtureLoginResponse,
+} from "./mocks/data/fixture.main";
 
 const authService = new AuthService(mockUserService);
 

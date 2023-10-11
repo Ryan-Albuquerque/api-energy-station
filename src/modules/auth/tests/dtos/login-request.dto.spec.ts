@@ -1,5 +1,5 @@
 import { LoginRequestDTO } from "../../dtos/login-request.dto";
-import { FixtureLoginRequest } from "../mocks/data/fixture-login-request";
+import { FixtureLoginRequest } from "../mocks/data/fixture.main";
 
 describe("LoginRequestDto", () => {
   it("should valid with success", () => {

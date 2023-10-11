@@ -1,15 +1,13 @@
 import { UserService } from "../services/user.service";
 import { mockUserRepository } from "./mocks/mock-user.repository";
-import { FixtureUserEntity } from "./mocks/data/fixture-user-entity";
-import { CreateOrUpdateUserDto } from "../dtos/create-or-update-user.dto";
+import { FixtureUserEntity } from "./mocks/data/fixture.main";
+import { CreateUserDto } from "../dtos/create-user.dto";
+import { UpdateUserDto } from "../dtos/update-user.dto";
 
 const userService = new UserService(mockUserRepository);
 
-const createOrUpdateUserMock: CreateOrUpdateUserDto = {
-  email: FixtureUserEntity.email,
-  name: FixtureUserEntity.name,
-  password: FixtureUserEntity.password,
-};
+const createUserMock = new CreateUserDto(FixtureUserEntity);
+const updateUserMock = new UpdateUserDto(FixtureUserEntity);
 
 beforeEach(() => jest.resetAllMocks());
 
@@ -19,7 +17,7 @@ describe("UserService", () => {
       // Arrange
 
       //Act
-      const response = await userService.create(createOrUpdateUserMock);
+      const response = await userService.create(createUserMock);
 
       //Assert
       expect(response).toEqual(FixtureUserEntity);
@@ -34,7 +32,7 @@ describe("UserService", () => {
       //Act
 
       //Assert
-      await expect(userService.create(createOrUpdateUserMock)).rejects.toThrow(
+      await expect(userService.create(createUserMock)).rejects.toThrow(
         "Fail to create User"
       );
     });
@@ -46,7 +44,7 @@ describe("UserService", () => {
       //Act
       const response = await userService.update(
         FixtureUserEntity._id.toString(),
-        createOrUpdateUserMock
+        updateUserMock
       );
 
       //Assert
@@ -60,7 +58,7 @@ describe("UserService", () => {
 
       //Assert
       await expect(
-        userService.update("objectId", createOrUpdateUserMock)
+        userService.update("objectId", updateUserMock)
       ).rejects.toThrow(`id objectId is invalid`);
     });
 
@@ -74,10 +72,7 @@ describe("UserService", () => {
 
       //Assert
       await expect(
-        userService.update(
-          FixtureUserEntity._id.toString(),
-          createOrUpdateUserMock
-        )
+        userService.update(FixtureUserEntity._id.toString(), updateUserMock)
       ).rejects.toThrow(
         `Fail to update User with id: ${FixtureUserEntity._id}`
       );
