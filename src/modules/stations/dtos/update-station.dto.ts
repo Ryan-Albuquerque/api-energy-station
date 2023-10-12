@@ -1,16 +1,16 @@
 import { z } from "zod";
 
-export class CreateOrUpdateStationDTO {
-  name: string;
-  planetName: string;
+export class UpdateStationDTO {
+  name?: string;
+  planetName?: string;
 
   private static schema = z.object({
-    planetName: z.string(),
-    name: z.string(),
+    planetName: z.string().optional(),
+    name: z.string().optional(),
   });
 
-  constructor(station: z.infer<typeof CreateOrUpdateStationDTO.schema>) {
-    const validatedStation = CreateOrUpdateStationDTO.schema.safeParse(station);
+  constructor(station: z.infer<typeof UpdateStationDTO.schema>) {
+    const validatedStation = UpdateStationDTO.schema.safeParse(station);
 
     if (!validatedStation.success) {
       throw new Error(`Validation Error: ${validatedStation.error}`);

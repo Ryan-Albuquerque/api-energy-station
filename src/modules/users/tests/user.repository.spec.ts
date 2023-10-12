@@ -1,7 +1,7 @@
 import { UserRepository } from "../repository/user.repository";
 import { CreateUserDto } from "../dtos/create-user.dto";
 import { UpdateUserDto } from "../dtos/update-user.dto";
-import { FixtureUserEntity } from "./mocks/data/fixture-user-entity";
+import { FixtureUserEntity } from "./mocks/data/fixture.main";
 import { UserModel } from "../model/user.model";
 import { mockModel } from "../../../tests/utils/mock-model";
 

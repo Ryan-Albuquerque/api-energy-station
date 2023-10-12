@@ -1,11 +1,12 @@
-import { CreateOrUpdateStationDTO } from "../dtos/create-or-update-station.dto";
 import { StationEntity } from "../station.entity";
+import { UpdateStationDTO } from "../dtos/update-station.dto";
+import { CreateStationDTO } from "../dtos/create-station.dto";
 
 export abstract class IStationRepository {
-  abstract create(station: CreateOrUpdateStationDTO): Promise<StationEntity>;
+  abstract create(station: CreateStationDTO): Promise<StationEntity>;
   abstract update(
     id: string,
-    station: CreateOrUpdateStationDTO
+    station: UpdateStationDTO
   ): Promise<StationEntity | null>;
   abstract list(): Promise<StationEntity[]>;
   abstract getByName(name: string): Promise<StationEntity | null>;

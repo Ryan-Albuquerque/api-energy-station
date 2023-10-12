@@ -1,5 +1,6 @@
 import { ObjectId } from "../../../utils/objectId";
-import { CreateOrUpdateStationDTO } from "../dtos/create-or-update-station.dto";
+import { CreateStationDTO } from "../dtos/create-station.dto";
+import { UpdateStationDTO } from "../dtos/update-station.dto";
 import { IStationRepository } from "../repository/station.repository.interface";
 import { IStationService } from "./station.service.interface";
 
@@ -18,19 +19,26 @@ export class StationService implements IStationService {
     return await this.stationRepository.getByPlanetName(name);
   }
 
-  private async isUniqueStationInPlanet(
+  private async isNotUniqueStationInPlanet(
     planet: string,
     name: string
   ): Promise<boolean> {
-    const station = await this.getByName(name);
+    const stations = await this.list();
 
-    return station && station?.planetName == planet ? false : true;
+    if (stations.length > 0) {
+      return stations.some((st) => {
+        return st.name == name || st.planetName == planet;
+      });
+    }
+    return false;
   }
 
-  async create(station: CreateOrUpdateStationDTO) {
-    if (
-      !(await this.isUniqueStationInPlanet(station.planetName, station.name))
-    ) {
+  async create(station: CreateStationDTO) {
+    const isNotUniqueStationInPlanet = await this.isNotUniqueStationInPlanet(
+      station.planetName,
+      station.name
+    );
+    if (isNotUniqueStationInPlanet) {
       throw new Error(
         "Should be unique planet - and registered in database - and station name"
       );
@@ -38,16 +46,12 @@ export class StationService implements IStationService {
 
     const newStation = await this.stationRepository.create(station);
 
-    if (!newStation) {
-      throw new Error("Fail to create Station");
-    }
-
     await this.stationRepository.syncHasStationPlanetDB(newStation);
 
     return newStation;
   }
 
-  async update(id: string, station: CreateOrUpdateStationDTO) {
+  async update(id: string, station: UpdateStationDTO) {
     if (!ObjectId.isValid(id)) {
       throw new Error("Invalid Id");
     }

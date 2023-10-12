@@ -1,5 +1,6 @@
 import { PlanetModel } from "../../planets/model/planet.model";
-import { CreateOrUpdateStationDTO } from "../dtos/create-or-update-station.dto";
+import { CreateStationDTO } from "../dtos/create-station.dto";
+import { UpdateStationDTO } from "../dtos/update-station.dto";
 import { StationModel } from "../model/station.model";
 import { StationEntity } from "../station.entity";
 import { IStationRepository } from "./station.repository.interface";
@@ -24,13 +25,13 @@ export class StationRepository implements IStationRepository {
     return await this.stationModel.find();
   }
 
-  async create(data: CreateOrUpdateStationDTO): Promise<StationEntity> {
+  async create(data: CreateStationDTO): Promise<StationEntity> {
     return await this.stationModel.create(data);
   }
 
   async update(
     id: string,
-    station: CreateOrUpdateStationDTO
+    station: UpdateStationDTO
   ): Promise<StationEntity | null> {
     const updated = await this.stationModel.findByIdAndUpdate(id, station, {
       new: true,

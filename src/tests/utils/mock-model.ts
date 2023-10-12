@@ -6,4 +6,5 @@ export const mockModel = {
   findOne: jest.fn(),
   create: jest.fn(),
   findByIdAndUpdate: jest.fn(),
+  updateOne: jest.fn(),
 };
