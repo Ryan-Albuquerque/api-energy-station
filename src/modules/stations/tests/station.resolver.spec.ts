@@ -1,59 +1,53 @@
-import { CreateUserDto } from "../dtos/create-user.dto";
-import { ResultUserDTO } from "../dtos/result-user.dto";
-import { UpdateUserDto } from "../dtos/update-user.dto";
-import { UserResolver } from "../resolvers/user.resolver";
-import { FixtureUserEntity } from "./mocks/data/fixture.main";
-import { mockUserService } from "./mocks/mock-station.service";
+import { CreateStationDTO } from "../dtos/create-station.dto";
+import { UpdateStationDTO } from "../dtos/update-station.dto";
+import { StationResolver } from "../resolvers/station.resolver";
+import { FixtureStationEntity } from "./mocks/data/fixture.main";
+import { mockStationService } from "./mocks/mock-station.service";
 
-const authResolver = new UserResolver(mockUserService);
+const stationResolver = new StationResolver(mockStationService);
 
-const createUserMock = new CreateUserDto(FixtureUserEntity);
-const updateUserMock = new UpdateUserDto(FixtureUserEntity);
-const resultUserMock = new ResultUserDTO(FixtureUserEntity);
+const createStationMock = new CreateStationDTO(FixtureStationEntity);
 
-describe("UserResolver", () => {
+describe("StationResolver", () => {
   describe("Mutations", () => {
-    describe("createUser", () => {
+    describe("createStation", () => {
       it("should resolve with successful", async () => {
-        const response = await authResolver.Mutation.createUser(null, {
-          user: createUserMock,
+        const response = await stationResolver.Mutation.installStation(null, {
+          station: createStationMock,
         });
 
-        expect(response).toEqual(resultUserMock);
+        expect(response).toEqual(FixtureStationEntity);
       });
     });
-    describe("updateUser", () => {
+    describe("updateStation", () => {
       it("should resolve with successful", async () => {
         //Arrange
-        const newUser = {
-          _id: FixtureUserEntity._id,
-          email: FixtureUserEntity.email,
+        const newStation = {
+          _id: FixtureStationEntity._id,
+          planetName: FixtureStationEntity.planetName,
           name: "test",
-          password: FixtureUserEntity.password,
         };
         jest
-          .spyOn(mockUserService, "update")
-          .mockImplementationOnce(() => Promise.resolve(newUser));
+          .spyOn(mockStationService, "update")
+          .mockImplementationOnce(() => Promise.resolve(newStation));
 
         //Act
-        const response = await authResolver.Mutation.updateUser(null, {
-          id: FixtureUserEntity._id.toString(),
-          user: { ...updateUserMock, name: "test" },
+        const response = await stationResolver.Mutation.updateStation(null, {
+          id: FixtureStationEntity._id.toString(),
+          station: { name: "test" },
         });
 
         //Assert
-        expect(response).toEqual(new ResultUserDTO(newUser));
+        expect(response).toEqual(newStation);
       });
     });
   });
   describe("Queries", () => {
-    describe("getUserByEmail", () => {
+    describe("listStations", () => {
       it("should resolve with successful", async () => {
-        const response = await authResolver.Query.getUserByEmail(null, {
-          email: FixtureUserEntity._id.toString(),
-        });
+        const response = await stationResolver.Query.listStations();
 
-        expect(response).toEqual(resultUserMock);
+        expect(response).toEqual(new Array(10).fill(FixtureStationEntity));
       });
     });
   });
