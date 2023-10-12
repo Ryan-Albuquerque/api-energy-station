@@ -24,12 +24,25 @@ describe("UserResolver", () => {
     });
     describe("updateUser", () => {
       it("should resolve with successful", async () => {
+        //Arrange
+        const newUser = {
+          _id: FixtureUserEntity._id,
+          email: FixtureUserEntity.email,
+          name: "test",
+          password: FixtureUserEntity.password,
+        };
+        jest
+          .spyOn(mockUserService, "update")
+          .mockImplementationOnce(() => Promise.resolve(newUser));
+
+        //Act
         const response = await authResolver.Mutation.updateUser(null, {
           id: FixtureUserEntity._id.toString(),
           user: { ...updateUserMock, name: "test" },
         });
 
-        expect(response).toEqual({ ...updateUserMock, name: "test" });
+        //Assert
+        expect(response).toEqual(new ResultUserDTO(newUser));
       });
     });
   });
