@@ -1,45 +1,64 @@
-// import { BcryptUtils } from "../../../utils/bcrypt";
-// import { JwtUtils } from "../../../utils/jwt";
-// import { mockUserService } from "./mocks/mock-user.service";
-// import { AuthService } from "../services/auth.service";
-// import { FixtureLoginResponse } from "./mocks/data/fixture-login-reponse";
-// import { FixtureLoginRequest } from "./mocks/data/fixture-login-request";
+import { UserRepository } from "../repository/user.repository";
+import { CreateUserDto } from "../dtos/create-user.dto";
+import { UpdateUserDto } from "../dtos/update-user.dto";
+import { FixtureUserEntity } from "./mocks/data/fixture-user-entity";
+import { UserModel } from "../model/user.model";
+import { mockModel } from "../../../tests/utils/mock-model";
 
-// const authService = new AuthService(mockUserService);
+const userRepository = new UserRepository(
+  mockModel as unknown as typeof UserModel
+);
 
-// beforeEach(() => jest.resetAllMocks());
+const createUserMock = new CreateUserDto(FixtureUserEntity);
 
-// describe("AuthService", () => {
-//   describe("Login", () => {
-//     it("should login with successful", async () => {
-//       // Arrange
-//       jest
-//         .spyOn(BcryptUtils, "comparePassword")
-//         .mockImplementationOnce(() => Promise.resolve(true));
+beforeEach(() => jest.resetAllMocks());
 
-//       jest
-//         .spyOn(JwtUtils, "sign")
-//         .mockImplementationOnce(() => FixtureLoginResponse.token);
+describe("UserRepository", () => {
+  describe("create", () => {
+    it("should create with successful", async () => {
+      // Arrange
+      jest
+        .spyOn(mockModel, "create")
+        .mockImplementationOnce(() => Promise.resolve(FixtureUserEntity));
+      //Act
+      const response = await userRepository.create(createUserMock);
 
-//       //Act
-//       const response = await authService.login(FixtureLoginRequest);
+      //Assert
+      expect(response).toEqual(FixtureUserEntity);
+    });
+  });
+  describe("update", () => {
+    it("should update with successful", async () => {
+      // Arrange
+      const valueToUpdate = { name: "test" };
+      const resultUpdated = { ...FixtureUserEntity, ...valueToUpdate };
+      const dataToUpdate = new UpdateUserDto({ ...valueToUpdate });
+      jest
+        .spyOn(mockModel, "findByIdAndUpdate")
+        .mockImplementationOnce(() => Promise.resolve(resultUpdated));
+      //Act
+      const response = await userRepository.update(
+        FixtureUserEntity._id.toString(),
+        dataToUpdate
+      );
 
-//       //Assert
-//       expect(response).toEqual(FixtureLoginResponse);
-//     });
+      //Assert
+      expect(response).toEqual(resultUpdated);
+      expect(response?.name).toEqual(valueToUpdate.name);
+    });
+  });
+  describe("getByEmail", () => {
+    it("should getByEmail with successful", async () => {
+      // Arrange
+      jest
+        .spyOn(mockModel, "findOne")
+        .mockImplementationOnce(() => Promise.resolve(FixtureUserEntity));
+      //Act
+      const response = await userRepository.getByEmail(FixtureUserEntity.email);
 
-//     it("should thow an `Invalid Credentials` exception", async () => {
-//       // Arrange
-//       jest
-//         .spyOn(BcryptUtils, "comparePassword")
-//         .mockImplementationOnce(() => Promise.resolve(false));
-
-//       //Act
-
-//       //Assert
-//       await expect(authService.login(FixtureLoginRequest)).rejects.toThrow(
-//         "Invalid Credentials"
-//       );
-//     });
-//   });
-// });
+      //Assert
+      expect(response).toEqual(FixtureUserEntity);
+      expect(response?.email).toEqual(FixtureUserEntity.email);
+    });
+  });
+});
