@@ -43,14 +43,6 @@ export class RechargeRepository implements IRechargeRepository {
   async create(recharge: CreateRechargeDTO): Promise<RechargeEntity> {
     return await this.rechargeModel.create(recharge);
   }
-  async update(
-    id: string,
-    recharge: CreateRechargeDTO
-  ): Promise<RechargeEntity | null> {
-    return await this.rechargeModel.findByIdAndUpdate(id, recharge, {
-      new: true,
-    });
-  }
   async listReservationByStationName(
     stationName: string
   ): Promise<ReservationEntity[]> {

@@ -7,10 +7,6 @@ export abstract class IRechargeRepository {
   abstract listByStationName(stationName: string): Promise<RechargeEntity[]>;
   abstract getById(id: string): Promise<RechargeEntity | null>;
   abstract create(recharge: CreateRechargeDTO): Promise<RechargeEntity>;
-  abstract update(
-    id: string,
-    recharge: CreateRechargeDTO
-  ): Promise<RechargeEntity | null>;
   abstract listReservationByStationName(
     stationName: string
   ): Promise<ReservationEntity[]>;
