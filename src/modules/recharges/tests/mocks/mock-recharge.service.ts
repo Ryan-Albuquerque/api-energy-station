@@ -3,6 +3,7 @@ import { RechargeEntity } from "../../entities/recharge.entity";
 import { FixtureRechargeEntity } from "./data/fixture.main";
 import { CreateRechargeRequestDTO } from "../../dtos/create-recharge-request.dto";
 import { HistoryRechargeInStation } from "../../entities/history-recharge-in-station.entity";
+import { faker } from "@faker-js/faker";
 
 export const mockRechargeService: IRechargeService = {
   async listHistoryFromAStation(
@@ -19,12 +20,9 @@ export const mockRechargeService: IRechargeService = {
       return Promise.resolve(fromNowDocs);
     }
 
-    var startDateMock = new Date();
+    var startDateMock = faker.date.past({ years: 2 });
 
-    startDateMock.setDate(startDateMock.getDate() - 2);
-    var endDateMock = new Date();
-
-    endDateMock.setDate(endDateMock.getDate() - 1);
+    var endDateMock = faker.date.past({ years: 1 });
 
     const pastDoc = {
       ...FixtureRechargeEntity,

@@ -19,6 +19,15 @@ export const ReservationGQL = gql`
     isTrigged: Boolean
   }
 
+  type Recharge {
+    _id: ID
+    stationName: String
+    userEmail: String
+    startDate: Date
+    endDate: Date
+    totalTime: Float
+  }
+
   type Query {
     listReservations: [Reservation]!
     listActiveReservations: [Reservation]!

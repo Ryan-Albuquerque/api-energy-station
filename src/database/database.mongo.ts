@@ -16,5 +16,4 @@ export const DatabaseConnect = async (uri: string) => {
 export const DatabaseDisconnect = async () => {
   await mongoose.connection.close();
   console.log("[MONGO] Closed with success");
-  process.exit(1);
 };

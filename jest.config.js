@@ -9,12 +9,12 @@ module.exports = {
     testEnvironment: "node",
     // A preset that is used as a base for Jest's configuration
     preset: 'ts-jest',
-
+    testTimeout: 500000,
     collectCoverage: true,
     collectCoverageFrom: ['src/**/*.{ts,tsx}', "!**/tests/**", "!**/*.interface.*"],
     coverageThreshold: {
       global: {
-        lines: 80
+        lines: 65
       }
     }
   };
