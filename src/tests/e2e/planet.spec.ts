@@ -42,15 +42,6 @@ describe("E2E - Planet", () => {
       });
 
       expect(response.data).toHaveProperty("suitablePlanets");
-      // expect(response?.data?.installPlanet).toHaveProperty("_id");
-      // expect(response?.data?.installPlanet).toHaveProperty("createdAt");
-      // expect(response?.data?.installPlanet).toHaveProperty("updatedAt");
-      // expect(response?.data?.installPlanet).toHaveProperty("name");
-      // expect(response?.data?.installPlanet).toHaveProperty("planetName");
-      // expect(response?.data?.installPlanet.name).toBe(planetData.planet.name);
-      // expect(response?.data?.installPlanet.planetName).toBe(
-      //   planetData.planet.planetName
-      // );
     });
   });
 });

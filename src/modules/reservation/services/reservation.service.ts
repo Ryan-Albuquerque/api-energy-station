@@ -63,25 +63,27 @@ export class ReservationService implements IReservationService {
     );
 
     if (!isValidToStartRecharge) {
-      throw new Error("User is recharging or Station is in us");
+      throw new Error("User is recharging or Station is in use");
     }
 
-    const updateInProgress = await this.update(reservation._id.toString(), {
+    await this.update(reservation._id.toString(), {
       isTrigged: true,
     });
 
-    updateInProgress &&
-      console.log(
-        `Starting recharge reservation(${reservation._id}) from ${reservation.stationName}`
-      );
+    console.log(
+      `Starting recharge reservation(${reservation._id}) from ${reservation.stationName}`
+    );
 
-    const recharge = await this.triggerReservation(reservation._id.toString());
+    const recharge = await this.rechargeService.create({
+      endDate: reservation.endDate,
+      stationName: reservation.stationName,
+      userEmail: reservation.userEmail,
+      startDate: reservation.startDate,
+    });
 
-    if (recharge._id) {
-      console.log(
-        `Recharge(${recharge._id}) reservation(${reservation._id}) from ${reservation.stationName} started`
-      );
-    }
+    console.log(
+      `Recharge(${recharge._id}) reservation(${reservation._id}) from ${reservation.stationName} started`
+    );
 
     return recharge;
   }

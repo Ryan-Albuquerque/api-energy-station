@@ -10,6 +10,19 @@ export const reservation = `
       }
     `;
 
+export const triggerReservation = `
+  mutation TriggerReservation($triggerReservationId: ID!) {
+    triggerReservation(id: $triggerReservationId) {
+      _id
+      endDate
+      startDate
+      stationName
+      totalTime
+      userEmail
+    }
+  }
+`;
+
 // export const reservationsQuery = `
 //   query Reservations {
 //     reservations {
