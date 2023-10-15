@@ -54,6 +54,10 @@ export class ReservationService implements IReservationService {
       throw new Error("Reservation not found or already trigged");
     }
 
+    const now = new Date();
+    if (now <= reservation.startDate || now > reservation.endDate) {
+      throw new Error("Reservation is not able to start recharge");
+    }
     const activeRecharges = await this.rechargeService.list(true);
 
     const isValidToStartRecharge = activeRecharges.every(
