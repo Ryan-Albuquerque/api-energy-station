@@ -1,4 +1,5 @@
-import { CreateOrUpdateStationDTO } from "../dtos/create-or-update-station.dto";
+import { CreateStationDTO } from "../dtos/create-station.dto";
+import { UpdateStationDTO } from "../dtos/update-station.dto";
 import { IStationService } from "../services/station.service.interface";
 import { IStationResolver } from "./station.resolver.interface";
 
@@ -8,24 +9,24 @@ export class StationResolver implements IStationResolver {
   Mutation = {
     installStation: async (
       _: any,
-      { station }: { station: CreateOrUpdateStationDTO }
+      { station }: { station: CreateStationDTO }
     ) => {
-      const request = new CreateOrUpdateStationDTO(station);
+      const request = new CreateStationDTO(station);
 
       return await this.stationService.create(request);
     },
     updateStation: async (
       _: any,
-      { id, station }: { id: string; station: CreateOrUpdateStationDTO }
+      { id, station }: { id: string; station: UpdateStationDTO }
     ) => {
-      const request = new CreateOrUpdateStationDTO(station);
+      const request = new UpdateStationDTO(station);
 
       return await this.stationService.update(id, request);
     },
   };
 
   Query = {
-    stations: async () => {
+    listStations: async () => {
       return await this.stationService.list();
     },
   };

@@ -1,6 +1,6 @@
 import { IStationService } from "../../stations/services/station.service.interface";
 import { PlanetEntity } from "../entities/planet.entity";
-import { SuitabilityPlanetEntity } from "../entities/suitability-planet.entity";
+import { SuitabilityPlanetWithStationEntity } from "../entities/suitability-planet-with-station-entity";
 import { IExternalPlanetServiceInterface } from "../external/external-planet.service.interface";
 import { IPlanetRepository } from "../repository/planet.repository.interface";
 import { IPlanetService } from "./planet.service.interface";
@@ -11,11 +11,9 @@ export class PlanetService implements IPlanetService {
     private readonly planetRepository: IPlanetRepository,
     private readonly stationService: IStationService
   ) {}
-  async getPlanets(): Promise<PlanetEntity[] | null> {
+  async getPlanets(): Promise<PlanetEntity[]> {
     let result = await this.planetRepository.listPlanet();
-    let newPlanets: Partial<
-      SuitabilityPlanetEntity | { hasStation: boolean }
-    >[] = [];
+    let newPlanets: SuitabilityPlanetWithStationEntity[] = [];
 
     const now = new Date();
 
@@ -26,28 +24,28 @@ export class PlanetService implements IPlanetService {
           el?.updatedAt.getFullYear(),
           el?.updatedAt.getMonth(),
           el?.updatedAt.getDate()
-        ) <= new Date(now.getFullYear(), now.getMonth(), now.getDate() - 1)
+        ) <= new Date(now.getFullYear(), now.getMonth(), now.getDate() - 5)
     );
 
-    if (result?.length == 0 || shouldUpdate) {
+    if (!result.length || shouldUpdate) {
       const planetsFetched = await this.externalPlanetService.fetchPlanet();
       if (!planetsFetched) {
-        throw new Error("No plants found");
+        return [];
       }
 
       for (const planet of planetsFetched) {
-        const hasStationInPlanet = await this.stationService.getByPlanetName(
-          planet.name
+        const hasStationInPlanet = Boolean(
+          await this.stationService.getByPlanetName(planet.name)
         );
 
         const planetData = {
           ...planet,
-          hasStation: Boolean(hasStationInPlanet) ?? false,
+          hasStation: hasStationInPlanet ?? false,
         };
 
         newPlanets.push(planetData);
       }
-      result = await this.planetRepository.cleanAndCreateMany(newPlanets);
+      result = await this.planetRepository.updateDB(newPlanets);
     }
 
     return result;

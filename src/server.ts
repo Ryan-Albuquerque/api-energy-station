@@ -3,27 +3,37 @@ dotenv.config();
 
 import { ApolloServer } from "apollo-server";
 import { DatabaseConnect } from "./database/database.mongo";
+import { makeExecutableSchema } from "@graphql-tools/schema";
+import { applyMiddleware } from "graphql-middleware";
+import { shield, allow } from "graphql-shield";
 
 //GraphTypes
+import { DateScalar } from "./utils/gql.scalar";
 import { UserGQL } from "./modules/users/user.graphql";
 import { PlanetGQL } from "./modules/planets/planet.graphql";
 import { StationGQL } from "./modules/stations/station.graphql";
 import { RechargeGQL } from "./modules/recharges/recharge.graphql";
 import { ReservationGQL } from "./modules/reservation/reservation.graphql";
+import { AuthGQL } from "./modules/auth/auth.graphql";
 
-//Resolvers
+//Modules
+import { authModule } from "./modules/auth/main";
 import { userModule } from "./modules/users/main";
 import { planetModule } from "./modules/planets/main";
 import { stationModule } from "./modules/stations/main";
 import { rechargeModule } from "./modules/recharges/main";
 import { reservationModule } from "./modules/reservation/main";
-import { DateScalar } from "./utils/gql.scalar";
-import { makeExecutableSchema } from "@graphql-tools/schema";
-
-DatabaseConnect(process.env.DB_URI ?? "");
 
 // Tipos do GraphQL
-const typeDefs = [UserGQL, PlanetGQL, StationGQL, RechargeGQL, ReservationGQL];
+const typeDefs = [
+  UserGQL,
+  PlanetGQL,
+  StationGQL,
+  RechargeGQL,
+  ReservationGQL,
+  AuthGQL,
+];
+
 // Resolvers
 const resolvers = {
   Date: DateScalar,
@@ -39,18 +49,44 @@ const resolvers = {
     ...userModule.Mutation,
     ...stationModule.Mutation,
     ...rechargeModule.Mutation,
+    ...authModule.Mutation,
   },
 };
 
-// Inicializando o Apollo Server
-const server = new ApolloServer({
-  schema: makeExecutableSchema({
+//middlewares
+const schemaWithMiddleware = applyMiddleware(
+  makeExecutableSchema({
     typeDefs,
     resolvers,
   }),
+  shield(
+    {
+      Query: {
+        "*": authModule.authenticationMiddleware.auth(),
+      },
+      Mutation: {
+        createUser: allow,
+        login: allow,
+        "*": authModule.authenticationMiddleware.auth(),
+      },
+    },
+    {
+      debug: true,
+    }
+  )
+);
+
+// Inicializando o Apollo Server
+const server = new ApolloServer({
+  schema: schemaWithMiddleware,
+  context: ({ req }) => ({ req }),
 });
 
 // Iniciar o servidor
-server.listen().then(({ url }) => {
-  console.log(`🚀 Server ready at ${url}`);
-});
+(async () => {
+  await DatabaseConnect(process.env.DB_URI ?? "");
+  server.listen().then(({ url }) => {
+    console.log(`🚀 Server ready at ${url}`);
+  });
+  require("./handleCrons");
+})();

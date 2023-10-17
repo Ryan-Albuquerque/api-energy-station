@@ -7,4 +7,11 @@ export class BcryptUtils {
 
     return hashedPassword;
   }
+
+  public static async comparePassword(
+    password: string,
+    targetPassword: string
+  ) {
+    return await bcrypt.compare(password, targetPassword);
+  }
 }

@@ -1,8 +1,10 @@
-import { RechargeEntity } from "../../recharges/recharge.entity";
+import { RechargeEntity } from "../../recharges/entities/recharge.entity";
 import { IRechargeService } from "../../recharges/services/recharge.service.interface";
 import { ReservationEntity } from "../reservation.entity";
 import { IReservationRepository } from "../repository/reservation.repository.interface";
 import { IReservationService } from "./reservation.service.interface";
+import { ObjectId } from "../../../utils/objectId";
+import { CreateOrUpdateReservationDto } from "../dtos/create-or-update-reservation.dto";
 
 export class ReservationService implements IReservationService {
   constructor(
@@ -11,66 +13,98 @@ export class ReservationService implements IReservationService {
   ) {}
 
   async createReservation(
-    reservation: ReservationEntity
+    reservation: CreateOrUpdateReservationDto
   ): Promise<RechargeEntity> {
-    this.isValidDate(reservation.startDate, reservation.endDate);
+    const now = new Date();
+    if (
+      reservation.startDate >= reservation.endDate ||
+      (now >= reservation.startDate && now >= reservation.endDate)
+    ) {
+      throw new Error(
+        "End date should be greater than start Date and/or dates should be greater than now"
+      );
+    }
 
-    const savedReservations = await this.listByStationName(
-      reservation.stationName
-    );
-    const savedRecharges = await this.rechargeService.getHistoryFromStation(
-      reservation.stationName
-    );
-
-    const newReservationStartDate = new Date(reservation.startDate);
-    const newReservationEndDate = new Date(reservation.endDate);
-
-    const occupiedDates = [...savedReservations, ...savedRecharges];
-
-    this.isStationBusy(
-      occupiedDates,
-      newReservationStartDate,
-      newReservationEndDate
-    );
-
-    const reservationCreated = await this.reservationRepository.create(
+    const isValidReservationRange = await this.isValidReservationRangeByStation(
       reservation
     );
 
-    if (!reservationCreated) {
-      throw new Error("Fail to create reservation");
+    if (!isValidReservationRange) {
+      throw new Error(
+        "This range is not valid for this station: " +
+          reservation.stationName +
+          "\n or user already have reservation for this time"
+      );
     }
+
+    const reservationCreated = await this.reservationRepository.create(
+      reservation as ReservationEntity
+    );
+
     return reservationCreated;
   }
 
-  async createRechargeByReservation(id: string): Promise<RechargeEntity> {
+  async triggerReservation(id: string): Promise<RechargeEntity> {
     const reservation = await this.reservationRepository.getById(id);
 
     if (!reservation) {
       throw new Error("Reservation not found");
     }
 
-    const itIsUpToRecharge =
-      new Date() >= reservation.startDate && new Date() <= reservation.endDate;
+    const now = new Date();
+    if (reservation.startDate > now || now > reservation.endDate) {
+      throw new Error("Reservation is not able to start recharge");
+    }
+    const activeRecharges = await this.rechargeService.list(true);
 
-    if (!itIsUpToRecharge) {
-      throw new Error("Incorrect time to recharge");
+    const isValidToStartRecharge = activeRecharges.every(
+      (rec) =>
+        rec.stationName !== reservation.stationName &&
+        rec.userEmail !== reservation.userEmail
+    );
+
+    if (!isValidToStartRecharge) {
+      throw new Error("User is recharging or Station is in use");
     }
 
-    return await this.rechargeService.create({
+    await this.update(reservation._id.toString(), {
+      isTrigged: true,
+    });
+
+    console.log(
+      `Starting recharge reservation(${reservation._id}) from ${reservation.stationName}`
+    );
+
+    const recharge = await this.rechargeService.create({
+      endDate: reservation.endDate,
       stationName: reservation.stationName,
       userEmail: reservation.userEmail,
-      startDate: new Date(),
-      endDate: reservation.endDate,
+      startDate: reservation.startDate,
     });
+
+    console.log(
+      `Recharge(${recharge._id}) reservation(${reservation._id}) from ${reservation.stationName} started`
+    );
+
+    return recharge;
   }
 
-  async list(): Promise<ReservationEntity[]> {
-    const reservations = await this.reservationRepository.list();
-
-    if (!reservations) {
-      throw new Error("Reservations Not found");
+  async getById(id: string): Promise<ReservationEntity> {
+    if (!ObjectId.isValid(id)) {
+      throw new Error("Is not valid Id");
     }
+
+    const reservation = await this.reservationRepository.getById(id);
+
+    if (!reservation) {
+      throw new Error("Reservation not found");
+    }
+
+    return reservation;
+  }
+
+  async list(fromNow?: boolean): Promise<ReservationEntity[]> {
+    const reservations = await this.reservationRepository.list(fromNow);
 
     return reservations;
   }
@@ -89,8 +123,14 @@ export class ReservationService implements IReservationService {
 
   async update(
     id: string,
-    reservation: ReservationEntity
+    reservation: Partial<CreateOrUpdateReservationDto>
   ): Promise<ReservationEntity> {
+    const reservationGot = await this.getById(id);
+
+    if (!reservationGot) {
+      throw new Error("Invalid reservation id");
+    }
+
     const reservationUpdated = await this.reservationRepository.update(
       id,
       reservation
@@ -103,29 +143,27 @@ export class ReservationService implements IReservationService {
     return reservationUpdated;
   }
 
-  private isStationBusy(
-    ocupedDates: ReservationEntity[] | RechargeEntity[],
-    inputStarDate: Date,
-    inputEndDate: Date
-  ) {
-    ocupedDates.forEach((ocupedDate) => {
-      const stationIsReservated =
-        inputEndDate >= ocupedDate.startDate &&
-        inputStarDate <= ocupedDate.endDate;
+  private async isValidReservationRangeByStation({
+    startDate,
+    endDate,
+    stationName,
+    userEmail,
+  }: CreateOrUpdateReservationDto): Promise<boolean> {
+    const savedReservations = await this.listByStationName(stationName);
+    const savedRecharges = await this.rechargeService.list(true);
 
-      if (stationIsReservated) {
-        throw new Error("Station is busy");
-      }
-    });
-  }
+    const isValidRangeByReservation = savedReservations.every(
+      (res) => startDate >= res.endDate || endDate <= res.startDate
+    );
 
-  private isValidDate(startDate: Date | string, endDate: Date | string) {
-    const isValid =
-      new Date(startDate) < new Date(endDate) ||
-      new Date(startDate) < new Date();
+    const isValidRangeByRecharge = savedRecharges.every(
+      (res) =>
+        startDate >= res.endDate ||
+        (res.stationName !== stationName && res.userEmail !== userEmail)
+    );
 
-    if (!isValid) {
-      throw new Error("Invalid date");
-    }
+    if (!isValidRangeByRecharge || !isValidRangeByReservation) return false;
+
+    return true;
   }
 }

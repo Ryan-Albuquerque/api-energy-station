@@ -1,19 +1,12 @@
 import { ReservationEntity } from "../../reservation/reservation.entity";
 import { CreateRechargeDTO } from "../dtos/create-recharge.dto";
-import { RechargeEntity } from "../recharge.entity";
+import { RechargeEntity } from "../entities/recharge.entity";
 
 export abstract class IRechargeRepository {
-  abstract list(): Promise<RechargeEntity[] | null>;
-  abstract listByStationName(
-    stationName: string
-  ): Promise<RechargeEntity[] | null>;
+  abstract list(fromNow?: boolean): Promise<RechargeEntity[]>;
+  abstract listByStationName(stationName: string): Promise<RechargeEntity[]>;
   abstract getById(id: string): Promise<RechargeEntity | null>;
-  abstract create(recharge: CreateRechargeDTO): Promise<RechargeEntity | null>;
-  abstract update(
-    id: string,
-    recharge: CreateRechargeDTO
-  ): Promise<RechargeEntity | null>;
-  abstract getActiveRecharges(): Promise<RechargeEntity[] | null>;
+  abstract create(recharge: CreateRechargeDTO): Promise<RechargeEntity>;
   abstract listReservationByStationName(
     stationName: string
   ): Promise<ReservationEntity[]>;

@@ -1,5 +1,5 @@
 import { PlanetEntity } from "../entities/planet.entity";
 
-export interface IPlanetService {
-  getPlanets(): Promise<PlanetEntity[] | null>;
+export abstract class IPlanetService {
+  abstract getPlanets(): Promise<PlanetEntity[]>;
 }

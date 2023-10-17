@@ -2,13 +2,22 @@ import { GraphQLScalarType, Kind } from "graphql";
 
 export const DateScalar = new GraphQLScalarType({
   name: "Date",
-  serialize(value: any) {
-    return value instanceof Date ? value.toISOString() : null;
+  serialize(value) {
+    if (value instanceof Date) {
+      return value.toISOString(); // Convert outgoing Date to Date for ISO string
+    }
+    throw Error("GraphQL Date Scalar serializer expected a `Date` object");
   },
-  parseValue(value: any) {
-    return new Date(value);
+  parseValue(value) {
+    if (typeof value === "string") {
+      return new Date(value); // Convert incoming string to Date
+    }
+    throw new Error("GraphQL Date Scalar parser expected a `string`");
   },
   parseLiteral(ast) {
-    return ast.kind === Kind.INT ? new Date(+ast.value) : null;
+    if (ast.kind === Kind.INT) {
+      return new Date(parseInt(ast.value, 10));
+    }
+    return null;
   },
 });

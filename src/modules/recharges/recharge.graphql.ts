@@ -15,7 +15,12 @@ export const RechargeGQL = gql`
     userEmail: String
     startDate: Date
     endDate: Date
-    totalTime: String
+    totalTime: Float
+  }
+
+  type HistoryRecharge {
+    recharges: [Recharge]
+    totalTime: Float
   }
 
   type Mutation {
@@ -24,6 +29,7 @@ export const RechargeGQL = gql`
 
   type Query {
     listRecharges: [Recharge]
-    stationHistory(stationName: String): [Recharge]
+    listActiveRecharges: [Recharge]
+    rechargeStationHistory(stationName: String): HistoryRecharge
   }
 `;

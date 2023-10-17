@@ -1,7 +1,6 @@
 import { ReservationModel } from "../model/reservation.model";
 import { ReservationEntity } from "../reservation.entity";
 import { IReservationRepository } from "./reservation.repository.interface";
-import { ObjectId } from "../../../utils/objectId";
 
 export class ReservationRepository implements IReservationRepository {
   constructor(private readonly reservationModel: typeof ReservationModel) {}
@@ -10,19 +9,27 @@ export class ReservationRepository implements IReservationRepository {
     return await this.reservationModel.create(reservation);
   }
 
-  async list(): Promise<ReservationEntity[]> {
-    return await this.reservationModel.find();
+  async list(fromNow?: boolean): Promise<ReservationEntity[]> {
+    const dateNow = new Date();
+
+    const options = fromNow
+      ? {
+          endDate: {
+            $gt: dateNow,
+          },
+        }
+      : undefined;
+
+    return await this.reservationModel.find({ ...options });
   }
 
   async getById(id: string): Promise<ReservationEntity | null> {
-    if (!ObjectId.isValid(id)) {
-      throw new Error("Invalid Id");
-    }
-
     return await this.reservationModel.findById(id);
   }
 
-  async getAllByStationName(stationName: string): Promise<ReservationEntity[]> {
+  async getAllByStationName(
+    stationName: string
+  ): Promise<ReservationEntity[] | null> {
     return await this.reservationModel.find({
       stationName: stationName,
     });
@@ -30,12 +37,10 @@ export class ReservationRepository implements IReservationRepository {
 
   async update(
     id: string,
-    reservation: ReservationEntity
+    reservation: Partial<ReservationEntity>
   ): Promise<ReservationEntity | null> {
-    if (!ObjectId.isValid(id)) {
-      throw new Error("Is not valid Id");
-    }
-
-    return await this.reservationModel.findByIdAndUpdate(id, reservation);
+    return await this.reservationModel.findByIdAndUpdate(id, reservation, {
+      new: true,
+    });
   }
 }

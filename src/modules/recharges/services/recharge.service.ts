@@ -1,10 +1,11 @@
-import { CreateRechargeDTO } from "../dtos/create-recharge.dto";
 import { IRechargeRepository } from "../repository/recharge.repository.interface";
 import { IRechargeService } from "./recharge.service.interface";
 import { IUserService } from "../../users/services/user.service.interface";
 import { IStationService } from "../../stations/services/station.service.interface";
-import { RechargeEntity } from "../recharge.entity";
 import { ReservationEntity } from "../../reservation/reservation.entity";
+import { HistoryRechargeInStation } from "../entities/history-recharge-in-station.entity";
+import { CreateRechargeRequestDTO } from "../dtos/create-recharge-request.dto";
+import { CreateRechargeDTO } from "../dtos/create-recharge.dto";
 
 export class RechargeService implements IRechargeService {
   constructor(
@@ -17,72 +18,56 @@ export class RechargeService implements IRechargeService {
     startDate,
     stationName,
     userEmail,
-  }: CreateRechargeDTO) {
-    this.isEndDateValid(endDate);
+  }: CreateRechargeRequestDTO) {
+    await this.validateParamsInBusinessRule(
+      userEmail,
+      stationName,
+      startDate,
+      endDate
+    );
 
-    await this.userService.getByEmail(userEmail);
-    await this.stationService.getByName(stationName);
+    const isStationInUseOrUserRecharging =
+      await this.isStationInUseOrUserRecharging(stationName, userEmail);
 
-    const recharges = await this.rechargeRepository.list();
-
-    if (
-      await this.isStationInUseOrUserRecharging(
-        recharges,
-        stationName,
-        userEmail
-      )
-    ) {
+    if (isStationInUseOrUserRecharging) {
       throw new Error("Station in use or user already recharding");
     }
 
     const reservations =
       await this.rechargeRepository.listReservationByStationName(stationName);
 
-    this.isStationAlreadyReserved(
+    const isStationAlreadyReservedNow = this.isStationAlreadyReservedInTheRange(
       reservations,
-      new Date(startDate),
-      new Date(endDate)
+      startDate,
+      endDate
     );
 
-    const created = await this.rechargeRepository.create({
+    if (isStationAlreadyReservedNow) {
+      throw new Error(
+        "This is station have a non-trigged recharge reservation for this range, try again later"
+      );
+    }
+
+    const totalTime = this.calculateTotalHour(endDate, startDate);
+
+    const rechargeEntity = new CreateRechargeDTO({
       endDate,
       startDate,
       stationName,
       userEmail,
+      totalTime: Number.parseFloat(totalTime),
     });
 
-    if (!created) {
-      throw new Error("Fail to create a recharding");
-    }
+    const created = await this.rechargeRepository.create(rechargeEntity);
 
     return created;
   }
 
-  private async isStationInUseOrUserRecharging(
-    recharges: RechargeEntity[] | null,
-    stationName: string,
-    userEmail: string
-  ) {
-    return recharges?.some(
-      (rec) =>
-        new Date(rec.endDate) > new Date() &&
-        new Date() >= new Date(rec.startDate) &&
-        rec.stationName == stationName &&
-        rec.userEmail == userEmail
-    );
+  async list(fromNow?: boolean) {
+    return await this.rechargeRepository.list(fromNow);
   }
 
-  async list() {
-    const recharges = await this.rechargeRepository.list();
-
-    if (!recharges) {
-      throw new Error("No recharges found");
-    }
-
-    return recharges;
-  }
-
-  async getHistoryFromStation(stationName: string) {
+  async listHistoryFromAStation(stationName: string) {
     const recharges = await this.rechargeRepository.listByStationName(
       stationName
     );
@@ -91,9 +76,16 @@ export class RechargeService implements IRechargeService {
       throw new Error(`Not found Recharges with station name ${stationName}`);
     }
 
-    const rechargesWithTotalHours = this.calcTotalHour(recharges);
+    const getAllRechargeTimeInStation = recharges.reduce(
+      (prev, curr) => prev + (curr?.totalTime ?? 0),
+      0
+    );
+    const allRechargeTimeInStation = getAllRechargeTimeInStation.toFixed(3);
 
-    return rechargesWithTotalHours;
+    return {
+      recharges,
+      totalTime: Number.parseFloat(allRechargeTimeInStation),
+    } as HistoryRechargeInStation;
   }
 
   async getById(id: string) {
@@ -106,34 +98,54 @@ export class RechargeService implements IRechargeService {
     return recharge;
   }
 
-  private isEndDateValid(endDate: string | Date) {
-    const isEndDateValid = new Date(endDate) > new Date();
+  private async validateParamsInBusinessRule(
+    userEmail: string,
+    stationName: string,
+    startDate: Date,
+    endDate: Date
+  ) {
+    const isEndDateValid = endDate > startDate;
     if (!isEndDateValid) {
       throw new Error(
         "Informed endDate is invalid, should be greater than now"
       );
     }
+
+    await this.userService.getByEmail(userEmail);
+
+    const station = await this.stationService.getByName(stationName);
+    if (!station) {
+      throw new Error(
+        "Invalid Station, try listStation to see available station"
+      );
+    }
   }
 
-  private isStationAlreadyReserved(
+  private async isStationInUseOrUserRecharging(
+    stationName: string,
+    userEmail: string
+  ) {
+    const recharges = await this.rechargeRepository.list(true);
+
+    return recharges?.some(
+      (rec) => rec.userEmail == userEmail || rec.stationName == stationName
+    );
+  }
+
+  private isStationAlreadyReservedInTheRange(
     reservations: ReservationEntity[],
     startDate: Date,
     endDate: Date
   ) {
     return reservations.some(
-      (res) => endDate >= res.startDate && startDate <= res.endDate
+      (res) =>
+        res.startDate >= startDate && res.startDate < endDate && !res.isTrigged
     );
   }
 
-  private calcTotalHour(recharges: RechargeEntity[]): RechargeEntity[] {
-    recharges.map((rec) => {
-      const timeInMs =
-        new Date(rec.endDate).getTime() - new Date(rec.startDate).getTime();
+  private calculateTotalHour(endDate: Date, startDate: Date) {
+    const timeInMs = endDate.getTime() - startDate.getTime();
 
-      const timeInHourFormated = (timeInMs / 1000 / 60 / 60).toFixed(3);
-      rec.totalTime = `${timeInHourFormated} hours`;
-    });
-
-    return recharges;
+    return (timeInMs / 1000 / 60 / 60).toFixed(3); //to Hour
   }
 }

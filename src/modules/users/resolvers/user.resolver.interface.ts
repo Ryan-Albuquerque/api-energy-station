@@ -1,15 +1,16 @@
-import { CreateOrUpdateUserDto } from "../dtos/create-or-update-user.dto";
+import { CreateUserDto } from "../dtos/create-user.dto";
 import { ResultUserDTO } from "../dtos/result-user.dto";
+import { UpdateUserDto } from "../dtos/update-user.dto";
 
 export abstract class IUserResolver {
   abstract Mutation: {
     updateUser: (
       _: any,
-      { id, user }: { id: string; user: CreateOrUpdateUserDto }
+      { id, user }: { id: string; user: UpdateUserDto }
     ) => Promise<ResultUserDTO>;
     createUser: (
       _: any,
-      { user }: { user: CreateOrUpdateUserDto }
+      { user }: { user: CreateUserDto }
     ) => Promise<ResultUserDTO>;
   };
 

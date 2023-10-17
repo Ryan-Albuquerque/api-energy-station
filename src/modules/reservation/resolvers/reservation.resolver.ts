@@ -1,4 +1,4 @@
-import { RechargeEntity } from "../../recharges/recharge.entity";
+import { RechargeEntity } from "../../recharges/entities/recharge.entity";
 import { CreateOrUpdateReservationDto } from "../dtos/create-or-update-reservation.dto";
 import { IReservationService } from "../services/reservation.service.interface";
 import { IReservationResolver } from "./reservation.resolver.interface";
@@ -19,7 +19,7 @@ export class ReservationResolver implements IReservationResolver {
       _: any,
       { id }: { id: string }
     ): Promise<RechargeEntity> => {
-      return await this.reservationService.createRechargeByReservation(id);
+      return await this.reservationService.triggerReservation(id);
     },
 
     updateReservation: async (
@@ -37,6 +37,9 @@ export class ReservationResolver implements IReservationResolver {
   Query = {
     listReservations: async () => {
       return await this.reservationService.list();
+    },
+    listActiveReservations: async () => {
+      return await this.reservationService.list(true);
     },
   };
 }

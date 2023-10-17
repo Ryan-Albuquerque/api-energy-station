@@ -1,14 +1,15 @@
 import { IUserService } from "../services/user.service.interface";
 import { IUserResolver } from "./user.resolver.interface";
-import { CreateOrUpdateUserDto } from "../dtos/create-or-update-user.dto";
+import { CreateUserDto } from "../dtos/create-user.dto";
 import { ResultUserDTO } from "../dtos/result-user.dto";
+import { UpdateUserDto } from "../dtos/update-user.dto";
 
 export class UserResolver implements IUserResolver {
   constructor(private readonly userService: IUserService) {}
 
   Mutation = {
-    createUser: async (_: any, { user }: { user: CreateOrUpdateUserDto }) => {
-      const userData = new CreateOrUpdateUserDto(user);
+    createUser: async (_: any, { user }: { user: CreateUserDto }) => {
+      const userData = new CreateUserDto(user);
 
       const createdUser = await this.userService.create(userData);
 
@@ -16,9 +17,9 @@ export class UserResolver implements IUserResolver {
     },
     updateUser: async (
       _: any,
-      { id, user }: { id: string; user: CreateOrUpdateUserDto }
+      { id, user }: { id: string; user: UpdateUserDto }
     ) => {
-      const request = new CreateOrUpdateUserDto(user);
+      const request = new UpdateUserDto(user);
 
       const updatedUser = await this.userService.update(id, request);
 
