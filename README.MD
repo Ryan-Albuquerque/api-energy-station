@@ -46,12 +46,12 @@ Caso queira, crie uma conta no mongo atlas : https://account.mongodb.com/account
   docker-compose --env-file .env up
 ```
 
-**Execute os testes**:(Ainda não implementado)
+**Execute os testes**:
 
 ```bash
   npm run test
 
-  //ou para covarage
+  //ou para coverage
 
   npm run test:covarage
 ```
@@ -72,11 +72,11 @@ Caso queira, crie uma conta no mongo atlas : https://account.mongodb.com/account
 
 ### Extras
 
-- [ ] Adicione testes usando [Jest] ou qualquer outro framework para testes
+- [x] Adicione testes usando [Jest] ou qualquer outro framework para testes
 - [x] Usar Typescript
 - [x] Coloque um docker-compose, que simplifique rodar o seu servidor e o DB
 - [x] Usamos [prisma](prisma.io) mas sinta-se livre para usar qualquer ORM - Utilizei Mongoose
-- [ ] Adicione autenticação (apenas um usuário autenticado poderá fazer uma recarga ou uma reserva)
+- [x] Adicione autenticação (apenas um usuário autenticado poderá fazer uma recarga ou uma reserva)
 - [x] Crie uma mutation `reservation`, que dado uma estação, um usuário e um intervalo de tempo, cria uma reserva da estação para o usuário naquele determinado intervalo de tempo.
   - Não deve ser possível criar uma reserva que conflite com o intervalo de outra reserva ou de uma recarga já em andamento
   - Para realizar uma recarga de uma determinada reserva, é necessário chamar uma mutation (podendo ser a própria `recharge` ou uma nova mutation - como você preferir) passando apenas um `reservationId`. A utilização só pode ocorrer dentro do próprio intervalo de tempo da reserva (e.g. Se a reserva foi de 12:00 até 13:00, só deve ser possível utilizá-la entre 12:00 e 13:00).
