@@ -3,7 +3,7 @@ dotenv.config();
 import { ApolloServer } from "apollo-server";
 import { rechargeModule } from "../../modules/recharges/main";
 import { RechargeGQL } from "../../modules/recharges/recharge.graphql";
-import { recharge } from "./mocks/recharge.mock";
+import { listHistoryFromAStation, recharge } from "./mocks/recharge.mock";
 import { faker } from "@faker-js/faker";
 import { UserModel } from "../../modules/users/model/user.model";
 import {
@@ -264,6 +264,58 @@ describe("E2E - Recharge", () => {
           "This is station have a non-trigged recharge reservation for this range, try again later"
         );
         await ReservationModel.deleteMany({}).exec();
+      });
+    });
+  });
+
+  describe("List Recharge History", () => {
+    describe("Success", () => {
+      it("should list recharge history", async () => {
+        //Arrange
+        const now = new Date();
+        const recent = faker.date.recent();
+        const endDate = faker.date.soon({ refDate: now });
+
+        await RechargeModel.insertMany([
+          {
+            stationName: "test",
+            userEmail: "test@test.com",
+            endDate,
+            startDate: now,
+            totalTime: (
+              (endDate.getTime() - now.getTime()) /
+              1000 /
+              60 /
+              60
+            ).toFixed(3),
+          },
+          {
+            stationName: "test",
+            userEmail: "test2@test.com",
+            endDate,
+            startDate: recent,
+            totalTime: (
+              (endDate.getTime() - recent.getTime()) /
+              1000 /
+              60 /
+              60
+            ).toFixed(3),
+          },
+        ]);
+
+        //Act
+        const response = await testServer.executeOperation({
+          query: listHistoryFromAStation,
+          variables: {
+            stationName: "test",
+          },
+        });
+
+        //Assert
+
+        expect(response.data?.rechargeStationHistory).toBeDefined();
+
+        await RechargeModel.deleteMany({}).exec();
       });
     });
   });

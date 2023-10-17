@@ -106,10 +106,6 @@ export class ReservationService implements IReservationService {
   async list(fromNow?: boolean): Promise<ReservationEntity[]> {
     const reservations = await this.reservationRepository.list(fromNow);
 
-    if (!reservations) {
-      throw new Error("Reservations Not found");
-    }
-
     return reservations;
   }
 

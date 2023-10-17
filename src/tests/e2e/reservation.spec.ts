@@ -3,7 +3,12 @@ dotenv.config();
 import { ApolloServer } from "apollo-server";
 import { reservationModule } from "../../modules/reservation/main";
 import { ReservationGQL } from "../../modules/reservation/reservation.graphql";
-import { reservation, triggerReservation } from "./mocks/reservation.mock";
+import {
+  reservation,
+  triggerReservation,
+  activeReservation,
+  listReservations,
+} from "./mocks/reservation.mock";
 import { faker } from "@faker-js/faker";
 import { UserModel } from "../../modules/users/model/user.model";
 import {
@@ -471,6 +476,79 @@ describe("E2E - Reservation", () => {
         );
         await ReservationModel.deleteMany({}).exec();
         await RechargeModel.deleteMany({}).exec();
+      });
+    });
+  });
+
+  describe("Active reservation", () => {
+    describe("Success", () => {
+      it("should return active reservations", async () => {
+        //Arrange
+        const soon = faker.date.soon();
+        const past = faker.date.past();
+
+        await ReservationModel.insertMany([
+          {
+            stationName: "test",
+            userEmail: "test@test.com",
+            endDate: faker.date.soon({ refDate: soon }),
+            startDate: soon,
+          },
+          {
+            stationName: "test",
+            userEmail: "test@test.com",
+            endDate: past,
+            startDate: faker.date.past({ refDate: past }),
+          },
+        ]);
+
+        //Act
+        const response = await testServer.executeOperation({
+          query: activeReservation,
+        });
+
+        //Assert
+
+        expect(response.data?.listActiveReservations).toBeDefined();
+        expect(response.data?.listActiveReservations.length).toEqual(1);
+
+        await ReservationModel.deleteMany({}).exec();
+      });
+    });
+  });
+  describe("List reservation", () => {
+    describe("Success", () => {
+      it("should return reservations", async () => {
+        //Arrange
+        const soon = faker.date.soon();
+        const past = faker.date.past();
+
+        await ReservationModel.insertMany([
+          {
+            stationName: "test",
+            userEmail: "test@test.com",
+            endDate: faker.date.soon({ refDate: soon }),
+            startDate: soon,
+          },
+          {
+            stationName: "test",
+            userEmail: "test@test.com",
+            endDate: past,
+            startDate: faker.date.past({ refDate: past }),
+          },
+        ]);
+
+        //Act
+        const response = await testServer.executeOperation({
+          query: listReservations,
+        });
+
+        //Assert
+
+        expect(response.data?.listReservations).toBeDefined();
+        expect(response.data?.listReservations.length).toEqual(2);
+
+        await ReservationModel.deleteMany({}).exec();
       });
     });
   });

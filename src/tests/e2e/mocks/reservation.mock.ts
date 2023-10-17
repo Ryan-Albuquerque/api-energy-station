@@ -23,14 +23,27 @@ export const triggerReservation = `
   }
 `;
 
-// export const reservationsQuery = `
-//   query Reservations {
-//     reservations {
-//       _id
-//       createdAt
-//       name
-//       planetName
-//       updatedAt
-//     }
-//   }
-// `;
+export const activeReservation = `
+  query listActiveReservations {
+    listActiveReservations {
+      _id
+      stationName
+      userEmail
+      startDate
+      endDate
+      isTrigged
+    }
+  }
+`;
+export const listReservations = `
+  query listReservations {
+    listReservations {
+      _id
+      stationName
+      userEmail
+      startDate
+      endDate
+      isTrigged
+    }
+  }
+`;
