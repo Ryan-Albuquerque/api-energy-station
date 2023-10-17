@@ -13,7 +13,7 @@ export class ReservationService implements IReservationService {
   ) {}
 
   async createReservation(
-    reservation: ReservationEntity
+    reservation: CreateOrUpdateReservationDto
   ): Promise<RechargeEntity> {
     const now = new Date();
     if (
@@ -38,12 +38,9 @@ export class ReservationService implements IReservationService {
     }
 
     const reservationCreated = await this.reservationRepository.create(
-      reservation
+      reservation as ReservationEntity
     );
 
-    if (!reservationCreated) {
-      throw new Error("Fail to create reservation");
-    }
     return reservationCreated;
   }
 
@@ -55,14 +52,14 @@ export class ReservationService implements IReservationService {
     }
 
     const now = new Date();
-    if (now <= reservation.startDate || now > reservation.endDate) {
+    if (reservation.startDate > now || now > reservation.endDate) {
       throw new Error("Reservation is not able to start recharge");
     }
     const activeRecharges = await this.rechargeService.list(true);
 
     const isValidToStartRecharge = activeRecharges.every(
       (rec) =>
-        rec.stationName !== reservation.stationName ||
+        rec.stationName !== reservation.stationName &&
         rec.userEmail !== reservation.userEmail
     );
 
@@ -155,24 +152,18 @@ export class ReservationService implements IReservationService {
     endDate,
     stationName,
     userEmail,
-  }: ReservationEntity): Promise<boolean> {
+  }: CreateOrUpdateReservationDto): Promise<boolean> {
     const savedReservations = await this.listByStationName(stationName);
     const savedRecharges = await this.rechargeService.list(true);
 
     const isValidRangeByReservation = savedReservations.every(
-      (res) =>
-        (startDate >= res.endDate || endDate <= res.startDate) &&
-        endDate > startDate
+      (res) => startDate >= res.endDate || endDate <= res.startDate
     );
 
     const isValidRangeByRecharge = savedRecharges.every(
       (res) =>
-        endDate > startDate &&
-        !(
-          res.endDate > startDate &&
-          res.stationName == stationName &&
-          res.userEmail == userEmail
-        )
+        startDate >= res.endDate ||
+        (res.stationName !== stationName && res.userEmail !== userEmail)
     );
 
     if (!isValidRangeByRecharge || !isValidRangeByReservation) return false;

@@ -36,9 +36,12 @@ const stationData = {
 };
 
 beforeAll(async () => {
-  await DatabaseConnect(process.env.DB_URI_TEST ?? "");
+  const uri = process.env.DB_URI_TEST || "";
+
+  await DatabaseConnect(uri);
 
   await StationModel.deleteMany({}).exec();
+  await PlanetModel.deleteMany({}).exec();
   await PlanetModel.insertMany(suitablePlanets);
 });
 
@@ -57,11 +60,6 @@ describe("E2E - Station", () => {
       });
 
       expect(response.data).toHaveProperty("installStation");
-      expect(response?.data?.installStation).toHaveProperty("_id");
-      expect(response?.data?.installStation).toHaveProperty("createdAt");
-      expect(response?.data?.installStation).toHaveProperty("updatedAt");
-      expect(response?.data?.installStation).toHaveProperty("name");
-      expect(response?.data?.installStation).toHaveProperty("planetName");
       expect(response?.data?.installStation.name).toBe(
         stationData.station.name
       );

@@ -24,7 +24,9 @@ const testServer = new ApolloServer({
 });
 
 beforeAll(async () => {
-  await DatabaseConnect(process.env.DB_URI_TEST ?? "");
+  const uri = process.env.DB_URI_TEST || "";
+
+  await DatabaseConnect(uri);
 
   await PlanetModel.deleteMany({}).exec();
 });

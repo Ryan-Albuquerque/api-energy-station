@@ -60,10 +60,6 @@ export class RechargeService implements IRechargeService {
 
     const created = await this.rechargeRepository.create(rechargeEntity);
 
-    if (!created) {
-      throw new Error("Fail to create a recharding");
-    }
-
     return created;
   }
 

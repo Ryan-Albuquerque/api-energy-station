@@ -9,22 +9,3 @@ export const installStationMutation = `
         }
       }
     `;
-
-// export const stationsQuery = `
-//   query Stations {
-//     stations {
-//       _id
-//       createdAt
-//       name
-//       planetName
-//       updatedAt
-//     }
-//   }
-// `;
-
-export const variables = {
-  station: {
-    planetName: "HD 110014 b",
-    name: "Nebula",
-  },
-};
