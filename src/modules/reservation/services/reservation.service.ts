@@ -47,8 +47,8 @@ export class ReservationService implements IReservationService {
   async triggerReservation(id: string): Promise<RechargeEntity> {
     const reservation = await this.reservationRepository.getById(id);
 
-    if (!reservation || reservation.isTrigged) {
-      throw new Error("Reservation not found or already trigged");
+    if (!reservation) {
+      throw new Error("Reservation not found");
     }
 
     const now = new Date();

@@ -316,38 +316,7 @@ describe("E2E - Reservation", () => {
           },
         });
 
-        expect(response?.errors?.[0].message).toBe(
-          "Reservation not found or already trigged"
-        );
-      });
-      it("should fail because reservation is already trigged", async () => {
-        const startDate = faker.date.soon();
-        const endDate = faker.date.soon({ refDate: startDate });
-        const reservationData = {
-          reservation: {
-            startDate,
-            endDate,
-            stationName: "test",
-            userEmail: "test@test.com",
-            isTrigged: true,
-          },
-        };
-
-        const reservationCreated = await ReservationModel.create({
-          ...reservationData.reservation,
-        });
-
-        const response = await testServer.executeOperation({
-          query: triggerReservation,
-          variables: {
-            triggerReservationId: reservationCreated._id.toString(),
-          },
-        });
-
-        expect(response?.errors?.[0].message).toBe(
-          "Reservation not found or already trigged"
-        );
-        await ReservationModel.deleteMany({}).exec();
+        expect(response?.errors?.[0].message).toBe("Reservation not found");
       });
       it("should fail because it is not time to start the reservation recharge", async () => {
         const startDate = faker.date.future();
