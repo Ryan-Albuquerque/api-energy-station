@@ -36,7 +36,7 @@ afterAll(async () => {
   await DatabaseDisconnect();
 });
 
-describe("E2E - Planet", () => {
+describe("INTEGRATION - Planet", () => {
   describe("Query - SuitablePlanet", () => {
     it("should all suitable planets with success", async () => {
       const response = await testServer.executeOperation({

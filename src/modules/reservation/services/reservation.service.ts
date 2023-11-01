@@ -5,6 +5,18 @@ import { IReservationRepository } from "../repository/reservation.repository.int
 import { IReservationService } from "./reservation.service.interface";
 import { ObjectId } from "../../../utils/objectId";
 import { CreateOrUpdateReservationDto } from "../dtos/create-or-update-reservation.dto";
+import {
+  ENDDATE_SHOULD_BE_GREATER_THAN_NOW_OR_STARTDATE,
+  FAIL_TO_UPDATE_RESERVATION,
+  ID_IS_NOT_VALID,
+  RANGE_INVALID_FOR_STATION,
+  RESERVATION_ID_INVALID,
+  RESERVATION_NOT_ABLE_START,
+  RESERVATION_NOT_FOUND,
+  RESERVATION_NOT_FOUND_WITH_STATION,
+  USER_HAVE_RESERVATION,
+  USER_RECHARGING_STATION_IN_USE,
+} from "../../../utils/errorMessages";
 
 export class ReservationService implements IReservationService {
   constructor(
@@ -20,9 +32,7 @@ export class ReservationService implements IReservationService {
       reservation.startDate >= reservation.endDate ||
       (now >= reservation.startDate && now >= reservation.endDate)
     ) {
-      throw new Error(
-        "End date should be greater than start Date and/or dates should be greater than now"
-      );
+      throw new Error(ENDDATE_SHOULD_BE_GREATER_THAN_NOW_OR_STARTDATE);
     }
 
     const isValidReservationRange = await this.isValidReservationRangeByStation(
@@ -31,9 +41,9 @@ export class ReservationService implements IReservationService {
 
     if (!isValidReservationRange) {
       throw new Error(
-        "This range is not valid for this station: " +
+        RANGE_INVALID_FOR_STATION +
           reservation.stationName +
-          "\n or user already have reservation for this time"
+          USER_HAVE_RESERVATION
       );
     }
 
@@ -48,12 +58,12 @@ export class ReservationService implements IReservationService {
     const reservation = await this.reservationRepository.getById(id);
 
     if (!reservation) {
-      throw new Error("Reservation not found");
+      throw new Error(RESERVATION_NOT_FOUND);
     }
 
     const now = new Date();
     if (reservation.startDate > now || now > reservation.endDate) {
-      throw new Error("Reservation is not able to start recharge");
+      throw new Error(RESERVATION_NOT_ABLE_START);
     }
     const activeRecharges = await this.rechargeService.list(true);
 
@@ -64,7 +74,7 @@ export class ReservationService implements IReservationService {
     );
 
     if (!isValidToStartRecharge) {
-      throw new Error("User is recharging or Station is in use");
+      throw new Error(USER_RECHARGING_STATION_IN_USE);
     }
 
     await this.update(reservation._id.toString(), {
@@ -91,13 +101,13 @@ export class ReservationService implements IReservationService {
 
   async getById(id: string): Promise<ReservationEntity> {
     if (!ObjectId.isValid(id)) {
-      throw new Error("Is not valid Id");
+      throw new Error(ID_IS_NOT_VALID);
     }
 
     const reservation = await this.reservationRepository.getById(id);
 
     if (!reservation) {
-      throw new Error("Reservation not found");
+      throw new Error(RESERVATION_NOT_FOUND);
     }
 
     return reservation;
@@ -115,7 +125,7 @@ export class ReservationService implements IReservationService {
     );
 
     if (!reservations) {
-      throw new Error("Not found reservation with this station name");
+      throw new Error(RESERVATION_NOT_FOUND_WITH_STATION);
     }
 
     return reservations;
@@ -128,7 +138,7 @@ export class ReservationService implements IReservationService {
     const reservationGot = await this.getById(id);
 
     if (!reservationGot) {
-      throw new Error("Invalid reservation id");
+      throw new Error(RESERVATION_ID_INVALID);
     }
 
     const reservationUpdated = await this.reservationRepository.update(
@@ -137,7 +147,7 @@ export class ReservationService implements IReservationService {
     );
 
     if (!reservationUpdated) {
-      throw new Error("Fail to update reservation");
+      throw new Error(FAIL_TO_UPDATE_RESERVATION);
     }
 
     return reservationUpdated;

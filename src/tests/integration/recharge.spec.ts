@@ -70,7 +70,7 @@ afterAll(async () => {
   await DatabaseDisconnect();
 });
 
-describe("E2E - Recharge", () => {
+describe("INTEGRATION - Recharge", () => {
   describe("Create Recharge", () => {
     describe("Success", () => {
       it("should create recharge", async () => {

@@ -1,3 +1,8 @@
+import {
+  FAIL_TO_UPDATE_STATION_WITH_ID,
+  ID_IS_NOT_VALID,
+  SHOULD_BE_UNIQUE_PLANET,
+} from "../../../utils/errorMessages";
 import { ObjectId } from "../../../utils/objectId";
 import { CreateStationDTO } from "../dtos/create-station.dto";
 import { UpdateStationDTO } from "../dtos/update-station.dto";
@@ -39,9 +44,7 @@ export class StationService implements IStationService {
       station.name
     );
     if (isNotUniqueStationInPlanet) {
-      throw new Error(
-        "Should be unique planet - and registered in database - and station name"
-      );
+      throw new Error(SHOULD_BE_UNIQUE_PLANET);
     }
 
     const newStation = await this.stationRepository.create(station);
@@ -53,12 +56,12 @@ export class StationService implements IStationService {
 
   async update(id: string, station: UpdateStationDTO) {
     if (!ObjectId.isValid(id)) {
-      throw new Error("Invalid Id");
+      throw new Error(ID_IS_NOT_VALID);
     }
     const updatedStation = await this.stationRepository.update(id, station);
 
     if (!updatedStation) {
-      throw new Error(`Fail to update Station with id ${id}`);
+      throw new Error(FAIL_TO_UPDATE_STATION_WITH_ID + id);
     }
 
     return updatedStation;

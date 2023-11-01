@@ -6,6 +6,14 @@ import { ReservationEntity } from "../../reservation/reservation.entity";
 import { HistoryRechargeInStation } from "../entities/history-recharge-in-station.entity";
 import { CreateRechargeRequestDTO } from "../dtos/create-recharge-request.dto";
 import { CreateRechargeDTO } from "../dtos/create-recharge.dto";
+import {
+  ENDDATE_SHOULD_BE_GREATER_THAN_NOW,
+  INVALID_STATION_TRY_LISTSTATION,
+  NON_TRIGGER_RESERVATION_TRY_LATER,
+  NOT_FOUND_BY_ID,
+  RECHARGE_NOT_FOUND_BY_STATION,
+  STATION_IN_USE_OR_ALREADY_RECHARGING,
+} from "../../../utils/errorMessages";
 
 export class RechargeService implements IRechargeService {
   constructor(
@@ -30,7 +38,7 @@ export class RechargeService implements IRechargeService {
       await this.isStationInUseOrUserRecharging(stationName, userEmail);
 
     if (isStationInUseOrUserRecharging) {
-      throw new Error("Station in use or user already recharding");
+      throw new Error(STATION_IN_USE_OR_ALREADY_RECHARGING);
     }
 
     const reservations =
@@ -43,9 +51,7 @@ export class RechargeService implements IRechargeService {
     );
 
     if (isStationAlreadyReservedNow) {
-      throw new Error(
-        "This is station have a non-trigged recharge reservation for this range, try again later"
-      );
+      throw new Error(NON_TRIGGER_RESERVATION_TRY_LATER);
     }
 
     const totalTime = this.calculateTotalHour(endDate, startDate);
@@ -73,7 +79,7 @@ export class RechargeService implements IRechargeService {
     );
 
     if (!recharges) {
-      throw new Error(`Not found Recharges with station name ${stationName}`);
+      throw new Error(RECHARGE_NOT_FOUND_BY_STATION + stationName);
     }
 
     const getAllRechargeTimeInStation = recharges.reduce(
@@ -92,7 +98,7 @@ export class RechargeService implements IRechargeService {
     const recharge = await this.rechargeRepository.getById(id);
 
     if (!recharge) {
-      throw new Error(`Not found with id ${id}`);
+      throw new Error(NOT_FOUND_BY_ID + id);
     }
 
     return recharge;
@@ -106,18 +112,14 @@ export class RechargeService implements IRechargeService {
   ) {
     const isEndDateValid = endDate > startDate;
     if (!isEndDateValid) {
-      throw new Error(
-        "Informed endDate is invalid, should be greater than now"
-      );
+      throw new Error(ENDDATE_SHOULD_BE_GREATER_THAN_NOW);
     }
 
     await this.userService.getByEmail(userEmail);
 
     const station = await this.stationService.getByName(stationName);
     if (!station) {
-      throw new Error(
-        "Invalid Station, try listStation to see available station"
-      );
+      throw new Error(INVALID_STATION_TRY_LISTSTATION);
     }
   }
 

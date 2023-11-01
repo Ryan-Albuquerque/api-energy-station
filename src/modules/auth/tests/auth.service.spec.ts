@@ -16,7 +16,7 @@ describe("AuthService", () => {
     it("should login with successful", async () => {
       // Arrange
       jest
-        .spyOn(BcryptUtils, "comparePassword")
+        .spyOn(BcryptUtils, "compare")
         .mockImplementationOnce(() => Promise.resolve(true));
 
       jest
@@ -33,7 +33,7 @@ describe("AuthService", () => {
     it("should throw `Invalid Credentials` exception when password is not valid", async () => {
       // Arrange
       jest
-        .spyOn(BcryptUtils, "comparePassword")
+        .spyOn(BcryptUtils, "compare")
         .mockImplementationOnce(() => Promise.resolve(false));
 
       //Act

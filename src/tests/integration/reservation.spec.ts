@@ -79,7 +79,7 @@ afterAll(async () => {
   await DatabaseDisconnect();
 });
 
-describe("E2E - Reservation", () => {
+describe("INTEGRATION - Reservation", () => {
   describe("Create Reservation", () => {
     describe("Success", () => {
       it("should create reservation", async () => {
