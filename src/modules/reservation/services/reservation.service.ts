@@ -7,7 +7,7 @@ import { ObjectId } from "../../../utils/objectId";
 import { CreateOrUpdateReservationDto } from "../dtos/create-or-update-reservation.dto";
 import {
   ENDDATE_SHOULD_BE_GREATER_THAN_NOW_OR_STARTDATE,
-  FAIL_TO_UPDATE_RESERVATION,
+  FAIL_TO_UPDATE_WITH_ID,
   ID_IS_NOT_VALID,
   RANGE_INVALID_FOR_STATION,
   RESERVATION_ID_INVALID,
@@ -147,7 +147,7 @@ export class ReservationService implements IReservationService {
     );
 
     if (!reservationUpdated) {
-      throw new Error(FAIL_TO_UPDATE_RESERVATION);
+      throw new Error(FAIL_TO_UPDATE_WITH_ID + id);
     }
 
     return reservationUpdated;

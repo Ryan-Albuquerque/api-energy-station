@@ -1,5 +1,5 @@
 import {
-  FAIL_TO_UPDATE_STATION_WITH_ID,
+  FAIL_TO_UPDATE_WITH_ID,
   ID_IS_NOT_VALID,
   SHOULD_BE_UNIQUE_PLANET,
 } from "../../../utils/errorMessages";
@@ -61,7 +61,7 @@ export class StationService implements IStationService {
     const updatedStation = await this.stationRepository.update(id, station);
 
     if (!updatedStation) {
-      throw new Error(FAIL_TO_UPDATE_STATION_WITH_ID + id);
+      throw new Error(FAIL_TO_UPDATE_WITH_ID + id);
     }
 
     return updatedStation;

@@ -27,9 +27,8 @@ export const ID_IS_NOT_VALID = "ID is not valid";
 export const RESERVATION_NOT_FOUND_WITH_STATION =
   "Reservation not found with this station name";
 export const RESERVATION_ID_INVALID = "Reservation ID is invalid";
-export const FAIL_TO_UPDATE_RESERVATION = "Fail to update reservation";
-export const FAIL_TO_UPDATE_STATION_WITH_ID = "Fail to update Station with id ";
 export const SHOULD_BE_UNIQUE_PLANET =
   "Should be unique planet - and registered in database - and station name";
 export const FAIL_CREATE_USER = "Failed to create user";
-
+export const FAIL_TO_UPDATE_WITH_ID = "Failed to update with id ";
+export const USER_WITH_EMAIL_NOT_FOUND = "User not found with email ";
