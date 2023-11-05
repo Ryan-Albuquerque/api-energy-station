@@ -43,6 +43,7 @@ export class ReservationService implements IReservationService {
       throw new Error(
         RANGE_INVALID_FOR_STATION +
           reservation.stationName +
+          "\n " +
           USER_HAVE_RESERVATION
       );
     }

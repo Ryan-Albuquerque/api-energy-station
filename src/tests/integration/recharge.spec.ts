@@ -149,7 +149,7 @@ describe("INTEGRATION - Recharge", () => {
 
         expect(response.data?.recharge).toBeFalsy();
         expect(response.errors?.[0].message).toEqual(
-          "User with email test_@test.com not found"
+          "User not found with email test_@test.com"
         );
       });
       it("should fail because station is invalid", async () => {

@@ -74,7 +74,7 @@ describe("StationService", () => {
       //Assert
       await expect(
         stationService.update("objectId", updateStationMock)
-      ).rejects.toThrow(`Invalid Id`);
+      ).rejects.toThrow("ID is not valid");
     });
 
     it("should throw `fail to update` exception when update operation fail", async () => {
@@ -91,9 +91,7 @@ describe("StationService", () => {
           FixtureStationEntity._id.toString(),
           updateStationMock
         )
-      ).rejects.toThrow(
-        `Fail to update Station with id ${FixtureStationEntity._id}`
-      );
+      ).rejects.toThrow(`Fail to update with id: ${FixtureStationEntity._id}`);
     });
   });
 
