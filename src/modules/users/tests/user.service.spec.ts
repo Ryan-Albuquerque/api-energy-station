@@ -33,7 +33,7 @@ describe("UserService", () => {
 
       //Assert
       await expect(userService.create(createUserMock)).rejects.toThrow(
-        "Fail to create User"
+        "Fail to create user"
       );
     });
   });
@@ -59,7 +59,7 @@ describe("UserService", () => {
       //Assert
       await expect(
         userService.update("objectId", updateUserMock)
-      ).rejects.toThrow(`id objectId is invalid`);
+      ).rejects.toThrow(`ID is not valid`);
     });
 
     it("should throw `fail to update` exception when update operation fail", async () => {
@@ -73,9 +73,7 @@ describe("UserService", () => {
       //Assert
       await expect(
         userService.update(FixtureUserEntity._id.toString(), updateUserMock)
-      ).rejects.toThrow(
-        `Fail to update User with id: ${FixtureUserEntity._id}`
-      );
+      ).rejects.toThrow(`Fail to update with id: ${FixtureUserEntity._id}`);
     });
   });
 
@@ -101,7 +99,7 @@ describe("UserService", () => {
       //Assert
       await expect(
         userService.getByEmail(FixtureUserEntity.email)
-      ).rejects.toThrow(`User with email ${FixtureUserEntity.email} not found`);
+      ).rejects.toThrow(`User not found with email ${FixtureUserEntity.email}`);
     });
   });
 });

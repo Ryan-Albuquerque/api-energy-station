@@ -1,6 +1,7 @@
 import { rule } from "graphql-shield";
 import { IAuthenticationMiddleware } from "./authentication.middleware.interface";
 import { JwtUtils } from "../../../utils/jwt";
+import { TOKEN_IS_NECESSARY } from "../../../utils/errorMessages";
 
 /* istanbul ignore file */
 export class AuthenticationMiddleware implements IAuthenticationMiddleware {
@@ -22,7 +23,7 @@ export class AuthenticationMiddleware implements IAuthenticationMiddleware {
 
         return true;
       } else {
-        throw new Error("Token is neccessary");
+        throw new Error(TOKEN_IS_NECESSARY);
       }
     });
   }

@@ -1,17 +1,14 @@
 import bcrypt from "bcrypt";
 
 export class BcryptUtils {
-  public static async hashPassword(password: string) {
+  public static async hash(value: string) {
     const saltRounds = 10;
-    const hashedPassword = await bcrypt.hash(password, saltRounds);
+    const hashed = await bcrypt.hash(value, saltRounds);
 
-    return hashedPassword;
+    return hashed;
   }
 
-  public static async comparePassword(
-    password: string,
-    targetPassword: string
-  ) {
-    return await bcrypt.compare(password, targetPassword);
+  public static async compare(value: string, hashedValue: string) {
+    return await bcrypt.compare(value, hashedValue);
   }
 }

@@ -51,7 +51,7 @@ afterAll(async () => {
   await DatabaseDisconnect();
 });
 
-describe("E2E - Station", () => {
+describe("INTEGRATION - Station", () => {
   describe("Mutation - InstallStation", () => {
     it("should create station with success", async () => {
       const response = await testServer.executeOperation({

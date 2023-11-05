@@ -1,6 +1,7 @@
 import axios from "axios";
 import { SuitabilityPlanetEntity } from "../../entities/suitability-planet.entity";
 import { IExternalPlanetServiceInterface } from "../external-planet.service.interface";
+import { FAIL_TO_FETCH_PLANET_DATA } from "../../../../utils/errorMessages";
 
 export class NasaService implements IExternalPlanetServiceInterface {
   static url =
@@ -23,7 +24,7 @@ export class NasaService implements IExternalPlanetServiceInterface {
 
       return suitabilityPlanets;
     } catch (error) {
-      throw new Error("Fail to fetch planet data");
+      throw new Error(FAIL_TO_FETCH_PLANET_DATA);
     }
   }
 }
